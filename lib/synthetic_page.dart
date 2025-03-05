@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -451,69 +450,6 @@ class _SyntheticPageState extends State<SyntheticPage> {
         print('Đã xảy ra lỗi: $e');
       }
     });
-
-    // dataExcel.sort((a, b) {
-    //   if (a[3].length < 8 || b[3].length < 8) {
-    //     print("Lỗi: Dữ liệu ngày tháng không hợp lệ! ${a[3]} - ${b[3]}");
-    //     return 0; // Không thay đổi thứ tự nếu có lỗi
-    //   }
-
-    //   DateTime dateA = DateTime.parse(
-    //       "${a[3].substring(4, 8)}-${a[3].substring(2, 4)}-${a[3].substring(0, 2)}");
-    //   DateTime dateB = DateTime.parse(
-    //       "${b[3].substring(4, 8)}-${b[3].substring(2, 4)}-${b[3].substring(0, 2)}");
-
-    //   int dateComparison = dateA.compareTo(dateB);
-    //   if (dateComparison != 0) {
-    //     return dateComparison;
-    //   }
-
-    //   return 0;
-    // });
-
-    // Sắp xếp dữ liệu
-    // dataExcel.sort((a, b) {
-    //   // So sánh theo ngày trước
-    //   int compareNgay = a[3].compareTo(b[3]);
-    //   if (compareNgay != 0) return compareNgay;
-
-    //   // Nếu cùng ngày, đảm bảo "Số:" nằm cuối cùng
-    //   bool isSoA = a[2].startsWith("Số:");
-    //   bool isSoB = b[2].startsWith("Số:");
-
-    //   if (isSoA && !isSoB) return 1; // Đẩy "Số:" xuống cuối
-    //   if (!isSoA && isSoB) return -1; // Giữ các mục khác trên đầu
-    //   return 0; // Giữ nguyên thứ tự nếu cả hai giống nhau
-    // });
-
-    // List<List<String>> sortedData = List.from(dataExcel);
-
-    // sortedData.sort((a, b) {
-    //   DateTime dateA = parseDate(a[3]);
-    //   DateTime dateB = parseDate(b[3]);
-
-    //   // Nếu ngày khác nhau, sắp xếp bình thường theo ngày
-    //   if (dateA.compareTo(dateB) != 0) {
-    //     return dateA.compareTo(dateB);
-    //   }
-
-    //   // Ưu tiên sản phẩm trước, sau đó CÔNG TY, cuối cùng là Tiền thuế
-    //   String valueA = a[12].isNotEmpty ? a[12] : a[10];
-    //   String valueB = b[12].isNotEmpty ? b[12] : b[10];
-
-    //   bool isACompany = valueA.contains("511");
-    //   bool isBCompany = valueB.contains("511");
-    //   bool isATax = valueA.contains("3331") || valueA.contains("1331");
-    //   bool isBTax = valueB.contains("3331") || valueB.contains("1331");
-
-    //   if (isATax && !isBTax) return 1; // "Tiền thuế" xuống cuối
-    //   if (!isATax && isBTax) return -1; // "Tiền thuế" xuống cuối
-
-    //   if (isACompany && !isBCompany) return 1; // "CÔNG TY" xuống dưới sản phẩm
-    //   if (!isACompany && isBCompany) return -1; // "CÔNG TY" xuống dưới sản phẩm
-
-    //   return 0; // Giữ nguyên thứ tự nếu cùng loại
-    // });
 
     List<List<String>> sortedData = List.from(dataExcel);
 

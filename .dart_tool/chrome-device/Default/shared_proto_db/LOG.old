@@ -1,0 +1,26 @@
+2025/03/06-15:53:07.732 a403 Reusing MANIFEST /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.OLTc5M/flutter_tools_chrome_device.LoFtHx/Default/shared_proto_db/MANIFEST-000001
+2025/03/06-15:53:07.733 a403 Recovering log #13
+2025/03/06-15:53:07.734 a403 Reusing old log /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.OLTc5M/flutter_tools_chrome_device.LoFtHx/Default/shared_proto_db/000013.log 
+2025/03/06-15:53:07.734 a403 Delete type=0 #10
+2025/03/06-15:53:07.734 a403 Delete type=0 #3
+2025/03/06-15:53:20.822 8307 Level-0 table #17: started
+2025/03/06-15:53:20.825 8307 Level-0 table #17: 486888 bytes OK
+2025/03/06-15:53:20.828 8307 Delete type=0 #13
+2025/03/06-15:53:20.829 8307 Compacting 4@0 + 1@1 files
+2025/03/06-15:53:20.830 8307 Generated table #18@0: 125 keys, 19283 bytes
+2025/03/06-15:53:20.830 8307 Compacted 4@0 + 1@1 files => 19283 bytes
+2025/03/06-15:53:20.832 8307 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/03/06-15:53:20.832 8307 Delete type=2 #14
+2025/03/06-15:53:20.832 8307 Delete type=2 #17
+2025/03/06-15:53:20.832 8307 Delete type=2 #7
+2025/03/06-15:53:20.832 8307 Delete type=2 #11
+2025/03/06-15:53:20.832 8307 Delete type=2 #9
+2025/03/06-16:02:52.230 f903 Level-0 table #20: started
+2025/03/06-16:02:52.241 f903 Level-0 table #20: 524915 bytes OK
+2025/03/06-16:02:52.245 f903 Delete type=0 #16
+2025/03/06-16:17:02.847 a403 Level-0 table #22: started
+2025/03/06-16:17:02.856 a403 Level-0 table #22: 635720 bytes OK
+2025/03/06-16:17:02.861 a403 Delete type=0 #19
+2025/03/06-16:21:30.209 a403 Level-0 table #24: started
+2025/03/06-16:21:30.215 a403 Level-0 table #24: 725528 bytes OK
+2025/03/06-16:21:30.218 a403 Delete type=0 #21

@@ -483,7 +483,7 @@ class ExcelUtils {
     // Thiết lập độ rộng cột
     sheet.getRangeByIndex(1, 1).columnWidth = 10; // STT
     sheet.getRangeByIndex(1, 2).columnWidth = 15; // Ngày tháng ghi sổ
-    sheet.getRangeByIndex(1, 3).columnWidth = 10; // Số hiệu
+    sheet.getRangeByIndex(1, 3).columnWidth = 15; // Số hiệu
     sheet.getRangeByIndex(1, 4).columnWidth = 12; // Ngày tháng
     sheet.getRangeByIndex(1, 5).columnWidth = 30; // Diễn giải
     sheet.getRangeByIndex(1, 6).columnWidth = 30; // Nhập
@@ -494,7 +494,7 @@ class ExcelUtils {
     sheet.getRangeByIndex(1, 11).columnWidth = 12; // Nợ
     sheet.getRangeByIndex(1, 12).columnWidth = 12; // Chi tiết
     sheet.getRangeByIndex(1, 13).columnWidth = 12; // Có
-    sheet.getRangeByIndex(1, 14).columnWidth = 12; // Chi tiết
+    sheet.getRangeByIndex(1, 14).columnWidth = 15; // Chi tiết
 ////////////////////////////////
     // 👉 **Sắp xếp dữ liệu theo cột "Ngày tháng ghi sổ"**
     // sortByDate(dataExcel, 1); // Cột "Ngày tháng ghi sổ" là cột thứ 2 (index 1)

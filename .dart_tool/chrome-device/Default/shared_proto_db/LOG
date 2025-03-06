@@ -1,2 +1,31 @@
-2025/03/05-16:30:38.609 8507 Creating DB /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.6ejkcs/flutter_tools_chrome_device.5LxsTb/Default/shared_proto_db since it was missing.
-2025/03/05-16:30:38.612 8507 Reusing MANIFEST /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.6ejkcs/flutter_tools_chrome_device.5LxsTb/Default/shared_proto_db/MANIFEST-000001
+2025/03/06-16:54:44.371 a303 Reusing MANIFEST /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.DTeN3b/flutter_tools_chrome_device.6ImKW1/Default/shared_proto_db/MANIFEST-000001
+2025/03/06-16:54:44.372 a303 Recovering log #23
+2025/03/06-16:54:44.372 a303 Reusing old log /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.DTeN3b/flutter_tools_chrome_device.6ImKW1/Default/shared_proto_db/000023.log 
+2025/03/06-16:54:44.373 a303 Delete type=0 #13
+2025/03/06-16:54:44.373 a303 Delete type=0 #10
+2025/03/06-16:54:44.373 a303 Delete type=0 #3
+2025/03/06-16:54:44.373 a303 Delete type=2 #14
+2025/03/06-16:54:44.373 a303 Delete type=2 #7
+2025/03/06-16:54:44.373 a303 Delete type=2 #11
+2025/03/06-16:54:44.373 a303 Delete type=2 #9
+2025/03/06-17:03:25.221 a303 Level-0 table #27: started
+2025/03/06-17:03:25.226 a303 Level-0 table #27: 542331 bytes OK
+2025/03/06-17:03:25.228 a303 Delete type=0 #23
+2025/03/06-17:03:25.235 a303 Compacting 4@0 + 1@1 files
+2025/03/06-17:03:25.239 a303 Generated table #28@0: 173 keys, 276920 bytes
+2025/03/06-17:03:25.239 a303 Compacted 4@0 + 1@1 files => 276920 bytes
+2025/03/06-17:03:25.240 a303 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/03/06-17:03:25.241 a303 Delete type=2 #20
+2025/03/06-17:03:25.241 a303 Delete type=2 #22
+2025/03/06-17:03:25.241 a303 Delete type=2 #27
+2025/03/06-17:03:25.241 a303 Delete type=2 #18
+2025/03/06-17:03:25.241 a303 Delete type=2 #24
+2025/03/06-17:08:22.219 a807 Level-0 table #30: started
+2025/03/06-17:08:22.223 a807 Level-0 table #30: 530033 bytes OK
+2025/03/06-17:08:22.225 a807 Delete type=0 #26
+2025/03/06-17:31:53.640 b003 Level-0 table #32: started
+2025/03/06-17:31:53.662 b003 Level-0 table #32: 631013 bytes OK
+2025/03/06-17:31:53.664 b003 Delete type=0 #29
+2025/03/06-17:33:08.499 b003 Level-0 table #34: started
+2025/03/06-17:33:08.503 b003 Level-0 table #34: 604676 bytes OK
+2025/03/06-17:33:08.507 b003 Delete type=0 #31

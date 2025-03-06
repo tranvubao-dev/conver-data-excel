@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:math';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart';
@@ -28,6 +30,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
   bool isAuxiliaryTemplateEnabled = false;
   Map<String, Object> _htmlContents = {};
   //////////////
+  List<Map<String, String>> uploadedFiles = [];
 
   void resetState() {
     setState(() {
@@ -176,25 +179,63 @@ class _SyntheticPageState extends State<SyntheticPage> {
               .querySelectorAll('.list-fill-out .data-item')[5]
               .querySelector('.di-value div')!
               .text;
-
           ///////////// tổng tiền thuế
-          var taxMoney = document
-              .querySelectorAll('.table-horizontal-wrapper .res-tb')[
-                  1] // Chọn bảng thứ 2 trong .table-horizontal-wrapper
-              .querySelectorAll(
-                  'tbody tr')[1] // Chọn dòng thứ 2 (dòng Tổng tiền thuế)
-              .querySelectorAll('td')[1] // Chọn cột thứ 2 (chứa số 37.840)
-              .text
-              .trim();
-          ///////////// tổng tiền thuế
-          var sumMoney = document
-              .querySelectorAll('.table-horizontal-wrapper .res-tb')[
-                  1] // Chọn bảng thứ 2 trong .table-horizontal-wrapper
-              .querySelectorAll('tbody tr')[0] //
-              .querySelectorAll('td')[1]
-              .text
-              .trim();
+          bool checkTitle =
+              (titleHeading.trim().toUpperCase() == "HOÁ ĐƠN GIÁ TRỊ GIA TĂNG");
+          var taxMoney;
 
+          if (checkTitle) {
+            var titletaxMoney = document
+                .querySelectorAll('.table-horizontal-wrapper .res-tb')[
+                    1] // Chọn bảng thứ 2 trong .table-horizontal-wrapper
+                .querySelectorAll(
+                    'tbody tr')[1] // Chọn dòng thứ 2 (dòng Tổng tiền thuế)
+                .querySelectorAll('td')[0] // Chọn cột thứ 2 (chứa số 37.840)
+                .text
+                .trim();
+            if (titletaxMoney == "Tổng tiền thuế (Tổng cộng tiền thuế)") {
+              taxMoney = document
+                  .querySelectorAll('.table-horizontal-wrapper .res-tb')[
+                      1] // Chọn bảng thứ 2 trong .table-horizontal-wrapper
+                  .querySelectorAll(
+                      'tbody tr')[1] // Chọn dòng thứ 2 (dòng Tổng tiền thuế)
+                  .querySelectorAll('td')[1] // Chọn cột thứ 2 (chứa số 37.840)
+                  .text
+                  .trim();
+            } else {
+              taxMoney = document
+                  .querySelectorAll('.table-horizontal-wrapper .res-tb')[
+                      1] // Chọn bảng thứ 2 trong .table-horizontal-wrapper
+                  .querySelectorAll(
+                      'tbody tr')[2] // Chọn dòng thứ 2 (dòng Tổng tiền thuế)
+                  .querySelectorAll('td')[1] // Chọn cột thứ 2 (chứa số 37.840)
+                  .text
+                  .trim();
+            }
+          } else {
+            taxMoney = document
+                .querySelectorAll('.table-horizontal-wrapper .res-tb')[0]
+                .querySelectorAll('tbody tr')[1]
+                .querySelectorAll('td')[1]
+                .text
+                .trim();
+          }
+
+          ///////////// tổng tiền chưa thuế
+          var sumMoney = checkTitle
+              ? document
+                  .querySelectorAll('.table-horizontal-wrapper .res-tb')[
+                      1] // Chọn bảng thứ 2 trong .table-horizontal-wrapper
+                  .querySelectorAll('tbody tr')[0] //
+                  .querySelectorAll('td')[1]
+                  .text
+                  .trim()
+              : document
+                  .querySelectorAll('.table-horizontal-wrapper .res-tb')[0]
+                  .querySelectorAll('tbody tr')[2] //
+                  .querySelectorAll('td')[1]
+                  .text
+                  .trim();
           var dataRows = document
               .querySelectorAll('.content-info .res-tb')
               .first
@@ -398,7 +439,6 @@ class _SyntheticPageState extends State<SyntheticPage> {
               ];
             }).toList();
           }
-
           List<List<String>> listPercentBuy = [
             [
               "",
@@ -513,6 +553,39 @@ class _SyntheticPageState extends State<SyntheticPage> {
     /// Pháo hoa
   }
 
+  // void _pickExcelFile() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['xlsx', 'xls'],
+  //   );
+
+  //   if (result != null) {
+  //     setState(() {
+  //       uploadedFiles = [
+  //         {
+  //           'name': result.files.single.name,
+  //           'bytes': base64Encode(result.files.single
+  //               .bytes!), // Dùng base64Encode để chuyển đổi bytes thành chuỗi
+  //         }
+  //       ]; // Luôn chỉ chứa 1 file
+  //     });
+
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Đã chọn file: ${result.files.single.name}')),
+  //     );
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Không có file nào được chọn')),
+  //     );
+  //   }
+  // }
+
+  // void _removeFile(int index) {
+  //   setState(() {
+  //     uploadedFiles.clear(); // Xóa file đã tải lên
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -585,6 +658,31 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                   label: const Text(
                                       'Tải lên file .zip Hoá Đơn Bán Hàng'),
                                 ),
+                                const VerticalDivider(thickness: 2, width: 40),
+                                // ElevatedButton.icon(
+                                //   onPressed: _pickExcelFile,
+                                //   style: ElevatedButton.styleFrom(
+                                //     padding: const EdgeInsets.symmetric(
+                                //         vertical: 16, horizontal: 32),
+                                //     textStyle: const TextStyle(fontSize: 18),
+                                //     elevation: 10,
+                                //     shape: RoundedRectangleBorder(
+                                //       borderRadius: BorderRadius.circular(10),
+                                //     ),
+                                //     backgroundColor: const Color.fromARGB(
+                                //         255, 219, 237, 252), // Màu nền nút
+                                //     shadowColor: const Color.fromARGB(
+                                //         255, 226, 235, 250),
+                                //   ).copyWith(
+                                //     elevation:
+                                //         WidgetStateProperty.all<double>(12),
+                                //     shadowColor: WidgetStateProperty.all<Color>(
+                                //         Colors.blue[800]!),
+                                //   ),
+                                //   icon: const Icon(Icons.upload_file),
+                                //   label: const Text(
+                                //       'Tải lên file Excel Ngân Hàng'),
+                                // ),
                               ]),
                           const SizedBox(height: 20),
                           Row(
@@ -594,7 +692,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                   const SizedBox(height: 20),
                                 Expanded(
                                   child: SizedBox(
-                                    height: 400,
+                                    height: 200,
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       itemCount: uploadedFileBuy.length,
@@ -624,7 +722,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                 const SizedBox(width: 20),
                                 Expanded(
                                   child: SizedBox(
-                                    height: 400,
+                                    height: 200,
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       itemCount: uploadedFileSale.length,
@@ -650,7 +748,34 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                       },
                                     ),
                                   ),
-                                )
+                                ),
+                                // const SizedBox(width: 20),
+                                // Expanded(
+                                //     child: SizedBox(
+                                //   height: 300,
+                                //   child: ListView.builder(
+                                //     itemCount: uploadedFiles.length,
+                                //     itemBuilder: (context, index) {
+                                //       final file = uploadedFiles[index];
+                                //       return Card(
+                                //         elevation: 10,
+                                //         margin: const EdgeInsets.symmetric(
+                                //             vertical: 8, horizontal: 16),
+                                //         child: ListTile(
+                                //           leading: const Icon(
+                                //               Icons.file_present,
+                                //               size: 40),
+                                //           title: Text(file['name'] ?? ''),
+                                //           trailing: IconButton(
+                                //             icon: const Icon(Icons.delete,
+                                //                 color: Colors.red),
+                                //             onPressed: () => _removeFile(index),
+                                //           ),
+                                //         ),
+                                //       );
+                                //     },
+                                //   ),
+                                // )),
                               ]),
                           const SizedBox(height: 20),
                           ElevatedButton(

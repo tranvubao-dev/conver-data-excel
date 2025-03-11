@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart';
+import 'package:html_to_excel/common/common_file_list.dart';
 import 'package:html_to_excel/logic/excel_utils.dart';
 import 'package:html_to_excel/logic/safe_value.dart';
 import 'package:html_to_excel/logic/zip_file_utils.dart';
@@ -20,10 +21,17 @@ class SyntheticPage extends StatefulWidget {
 class _SyntheticPageState extends State<SyntheticPage> {
   Uint8List? barcodePng;
   String? barcodeSvg;
-  List<Map<String, dynamic>> uploadedFileSale =
-      []; // List để lưu các file hoá đơn bán hàng
-  List<Map<String, dynamic>> uploadedFileBuy =
-      []; // List để lưu các file hoá đơn mua hàng
+  // List<Map<String, dynamic>> uploadedFileSale =
+  //     []; // List để lưu các file hoá đơn bán hàng
+  List<Map<String, dynamic>> uploadedFileSale1 = [];
+  List<Map<String, dynamic>> uploadedFileSale2 = [];
+  List<Map<String, dynamic>> uploadedFileSale3 = [];
+  List<Map<String, dynamic>> uploadedFileBuy1 = [];
+  List<Map<String, dynamic>> uploadedFileBuy2 = [];
+  List<Map<String, dynamic>> uploadedFileBuy3 = [];
+  List<Map<String, dynamic>> uploadedFileBuy4 = [];
+  List<Map<String, dynamic>> uploadedFileBuy5 = [];
+  List<Map<String, dynamic>> uploadedFileBuy6 = [];
   List<List<String>> dataExcel = [];
   String? _fileName;
 
@@ -35,19 +43,48 @@ class _SyntheticPageState extends State<SyntheticPage> {
   void resetState() {
     setState(() {
       dataExcel = []; // Đặt lại thanh tiêu đề
-      uploadedFileSale = []; // Xóa danh sách file
-      uploadedFileBuy = []; // Xóa danh sách file
+      uploadedFileSale1 = []; // Xóa danh sách file
+      uploadedFileSale2 = [];
+      uploadedFileSale3 = [];
+      uploadedFileBuy1 = []; // Xóa danh sách file
+      uploadedFileBuy2 = [];
+      uploadedFileBuy3 = [];
+      uploadedFileBuy4 = [];
+      uploadedFileBuy5 = [];
+      uploadedFileBuy6 = [];
       _htmlContents = {}; // Xóa nội dung HTML
     });
   }
 
-  void handlePickZipFiles(bool isBuy) async {
+  void handlePickZipFiles(bool isBuy, String value) async {
     // Sử dụng hàm từ file zip_file_utils.dart
     final files = await ZipFileUtils.pickZipFiles();
 
     if (files.isNotEmpty) {
       setState(() {
-        isBuy ? uploadedFileBuy = files : uploadedFileSale = files;
+        if (!isBuy) {
+          if (value == "Co156") {
+            uploadedFileSale1 = files;
+          } else if (value == "Co155") {
+            uploadedFileSale2 = files;
+          } else if (value == "Co154") {
+            uploadedFileSale3 = files;
+          }
+        } else {
+          if (value == "No152") {
+            uploadedFileBuy1 = files;
+          } else if (value == "No156") {
+            uploadedFileBuy2 = files;
+          } else if (value == "No153") {
+            uploadedFileBuy3 = files;
+          } else if (value == "No211") {
+            uploadedFileBuy4 = files;
+          } else if (value == "No154") {
+            uploadedFileBuy5 = files;
+          } else if (value == "No642") {
+            uploadedFileBuy6 = files;
+          }
+        }
       });
 
       // Duyệt qua từng file để xử lý nội dung
@@ -62,6 +99,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               _htmlContents[file['name']] = {
                 'content': invoiceContent,
                 'isBuy': isBuy, // Thêm thông tin loại hóa đơn
+                'value': value,
               };
             });
           } else {
@@ -70,24 +108,73 @@ class _SyntheticPageState extends State<SyntheticPage> {
                   content: Text(
                       'Không tìm thấy file invoice.html trong: ${file['name']}')),
             );
-            removeFile(
-                isBuy
-                    ? uploadedFileBuy
-                        .indexWhere((f) => f['name'] == file['name'])
-                    : uploadedFileSale
-                        .indexWhere((f) => f['name'] == file['name']),
-                isBuy);
+            int index = 0;
+            if (!isBuy) {
+              if (value == "Co156") {
+                index = uploadedFileSale1
+                    .indexWhere((f) => f['name'] == file['name']);
+              } else if (value == "Co155") {
+                index = uploadedFileSale2
+                    .indexWhere((f) => f['name'] == file['name']);
+              } else if (value == "Co154") {
+                index = uploadedFileSale3
+                    .indexWhere((f) => f['name'] == file['name']);
+              }
+            } else {
+              if (value == "No152") {
+                index = uploadedFileBuy1
+                    .indexWhere((f) => f['name'] == file['name']);
+              } else if (value == "No156") {
+                index = uploadedFileBuy2
+                    .indexWhere((f) => f['name'] == file['name']);
+              } else if (value == "No153") {
+                index = uploadedFileBuy3
+                    .indexWhere((f) => f['name'] == file['name']);
+              } else if (value == "No211") {
+                index = uploadedFileBuy4
+                    .indexWhere((f) => f['name'] == file['name']);
+              } else if (value == "No154") {
+                index = uploadedFileBuy5
+                    .indexWhere((f) => f['name'] == file['name']);
+              } else if (value == "No642") {
+                index = uploadedFileBuy6
+                    .indexWhere((f) => f['name'] == file['name']);
+              }
+            }
+            removeFile(index, isBuy, value);
           }
         }
       }
     }
   }
 
-  void removeFile(int index, bool isBuy) {
+  void removeFile(int index, bool isBuy, String value) {
     setState(() {
-      isBuy
-          ? uploadedFileBuy.removeAt(index)
-          : uploadedFileSale.removeAt(index);
+      if (isBuy) {
+        if (value == "No152") {
+          uploadedFileBuy1.removeAt(index);
+        } else if (value == "No156") {
+          uploadedFileBuy2.removeAt(index);
+        } else if (value == "No153") {
+          uploadedFileBuy3.removeAt(index);
+        } else if (value == "No211") {
+          uploadedFileBuy4.removeAt(index);
+        } else if (value == "No154") {
+          uploadedFileBuy5.removeAt(index);
+        } else if (value == "No642") {
+          uploadedFileBuy6.removeAt(index);
+        }
+      } else {
+        if (value == "Co156") {
+          uploadedFileSale1.removeAt(index);
+        } else if (value == "Co155") {
+          uploadedFileSale2.removeAt(index);
+        } else if (value == "Co154") {
+          uploadedFileSale3.removeAt(index);
+        } else {
+          uploadedFiles.removeAt(index);
+        }
+      }
     });
   }
 
@@ -95,6 +182,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
     // dataExcel.addAll(listTitle);
     _htmlContents.forEach((fileName, data) {
       bool isBuy = (data as Map<String, dynamic>)['isBuy']; // Lấy giá trị isBuy
+      String value =
+          (data as Map<String, dynamic>)['value']; // Lấy giá trị value
       String content =
           (data as Map<String, dynamic>)['content']; // Lấy nội dung hóa đơn
       try {
@@ -288,9 +377,9 @@ class _SyntheticPageState extends State<SyntheticPage> {
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
-                isBuy ? "" : "632",
+                isBuy ? value.substring(2) : "632",
                 "",
-                isBuy ? "331" : "",
+                isBuy ? "331" : value.substring(2),
                 customerCode,
 ///////////////////////////
                 dayElement, // Ngày
@@ -382,9 +471,9 @@ class _SyntheticPageState extends State<SyntheticPage> {
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
-                isBuy ? "" : "632",
+                isBuy ? value.substring(2) : "632",
                 "",
-                isBuy ? "331" : "",
+                isBuy ? "331" : value.substring(2),
                 customerCode,
 
                 /////////
@@ -553,38 +642,38 @@ class _SyntheticPageState extends State<SyntheticPage> {
     /// Pháo hoa
   }
 
-  // void _pickExcelFile() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ['xlsx', 'xls'],
-  //   );
+  void _pickExcelFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx', 'xls'],
+    );
 
-  //   if (result != null) {
-  //     setState(() {
-  //       uploadedFiles = [
-  //         {
-  //           'name': result.files.single.name,
-  //           'bytes': base64Encode(result.files.single
-  //               .bytes!), // Dùng base64Encode để chuyển đổi bytes thành chuỗi
-  //         }
-  //       ]; // Luôn chỉ chứa 1 file
-  //     });
+    if (result != null) {
+      setState(() {
+        uploadedFiles = [
+          {
+            'name': result.files.single.name,
+            'bytes': base64Encode(result.files.single
+                .bytes!), // Dùng base64Encode để chuyển đổi bytes thành chuỗi
+          }
+        ]; // Luôn chỉ chứa 1 file
+      });
 
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Đã chọn file: ${result.files.single.name}')),
-  //     );
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Không có file nào được chọn')),
-  //     );
-  //   }
-  // }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đã chọn file: ${result.files.single.name}')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Không có file nào được chọn')),
+      );
+    }
+  }
 
-  // void _removeFile(int index) {
-  //   setState(() {
-  //     uploadedFiles.clear(); // Xóa file đã tải lên
-  //   });
-  // }
+  void _removeFile(int index) {
+    setState(() {
+      uploadedFiles.clear(); // Xóa file đã tải lên
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -597,45 +686,141 @@ class _SyntheticPageState extends State<SyntheticPage> {
         body: Stack(children: [
           Container(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(5.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Center(
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                ElevatedButton.icon(
-                                  onPressed: () => handlePickZipFiles(true),
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16, horizontal: 32),
-                                    textStyle: const TextStyle(fontSize: 18),
-                                    elevation: 10, // Tạo độ cao cho nút
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          10), // Đường viền tròn cho nút
+                                PopupMenuButton<String>(
+                                  onSelected: (String value) {
+                                    handlePickZipFiles(
+                                        true, value); // Gọi hàm xử lý tải file
+                                  },
+                                  itemBuilder: (BuildContext context) => [
+                                    const PopupMenuItem(
+                                      value: "No152",
+                                      child: Text('Nhập kho nguyên vật liệu'),
                                     ),
-                                    backgroundColor: const Color.fromARGB(
-                                        255, 219, 237, 252), // Màu nền nút
-                                    shadowColor: const Color.fromARGB(
-                                        255, 226, 235, 250), // Màu bóng đổ
-                                  ).copyWith(
-                                    elevation: WidgetStateProperty.all<double>(
-                                        12), // Tăng độ cao khi nhấn
-                                    shadowColor: WidgetStateProperty.all<Color>(
-                                        Colors.blue[800]!),
+                                    const PopupMenuItem(
+                                      value: "No156",
+                                      child: Text('Nhập kho hàng hóa'),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "No153",
+                                      child: Text('Nhâp kho CCDC'),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "No211",
+                                      child: Text('Nhâp kho TSCĐ'),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "No154",
+                                      child: Text('Chi phí SXDD'),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "No642",
+                                      child: Text('Chi phí QLKD'),
+                                    ),
+                                  ],
+                                  child: ElevatedButton.icon(
+                                    onPressed: null,
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16, horizontal: 32),
+                                      textStyle: const TextStyle(fontSize: 18),
+                                      elevation: 10, // Tạo độ cao cho nút
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Đường viền tròn cho nút
+                                      ),
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 219, 237, 252), // Màu nền nút
+                                      shadowColor: const Color.fromARGB(
+                                          255,
+                                          226,
+                                          235,
+                                          250), // Màu bóng đổ// Giữ màu xanh ngay cả khi bị vô hiệu hóa
+                                      foregroundColor:
+                                          Colors.white, // Giữ màu chữ trắng
+                                      disabledBackgroundColor: const Color
+                                          .fromARGB(255, 219, 237,
+                                          252), // Đảm bảo màu nền không thay đổi
+                                      disabledForegroundColor:
+                                          const Color.fromARGB(255, 40, 64, 99),
+                                    ).copyWith(
+                                      elevation:
+                                          WidgetStateProperty.all<double>(
+                                              12), // Tăng độ cao khi nhấn
+                                      shadowColor:
+                                          WidgetStateProperty.all<Color>(
+                                              Colors.blue[800]!),
+                                    ),
+                                    icon: const Icon(Icons.upload_file),
+                                    label: const Text(
+                                        'Tải lên file .zip Hoá Đơn Mua Hàng'),
                                   ),
-                                  icon: const Icon(Icons.upload_file),
-                                  label: const Text(
-                                      'Tải lên file .zip Hoá Đơn Mua Hàng'),
                                 ),
-                                const VerticalDivider(thickness: 2, width: 40),
+                                // const VerticalDivider(thickness: 2, width: 80),
+                                PopupMenuButton<String>(
+                                  onSelected: (String value) {
+                                    handlePickZipFiles(
+                                        false, value); // Gọi hàm xử lý tải file
+                                  },
+                                  itemBuilder: (BuildContext context) => [
+                                    const PopupMenuItem(
+                                      value: "Co156",
+                                      child: Text('Doanh thu bán hàng hoá'),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "Co155",
+                                      child: Text('Doanh thu bán thành phẩm'),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: "Co154",
+                                      child: Text('Doanh thu cung cấp dịch vụ'),
+                                    ),
+                                  ],
+                                  child: ElevatedButton.icon(
+                                    onPressed: null,
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16, horizontal: 32),
+                                      textStyle: const TextStyle(fontSize: 18),
+                                      elevation: 10,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 252, 219, 237),
+                                      shadowColor: const Color.fromARGB(
+                                          255, 250, 226, 235),
+                                      foregroundColor:
+                                          Colors.white, // Giữ màu chữ trắng
+                                      disabledBackgroundColor: const Color
+                                          .fromARGB(255, 240, 128,
+                                          133), // Đảm bảo màu nền không thay đổi
+                                      disabledForegroundColor:
+                                          const Color.fromARGB(255, 40, 64, 99),
+                                    ).copyWith(
+                                      elevation:
+                                          WidgetStateProperty.all<double>(12),
+                                      shadowColor:
+                                          WidgetStateProperty.all<Color>(
+                                              Colors.pink[800]!),
+                                    ),
+                                    icon: const Icon(Icons.upload_file),
+                                    label: const Text(
+                                        'Tải lên file .zip Hoá Đơn Bán Hàng'),
+                                  ),
+                                ),
                                 ElevatedButton.icon(
-                                  onPressed: () => handlePickZipFiles(false),
+                                  onPressed: _pickExcelFile,
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16, horizontal: 32),
@@ -645,142 +830,117 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     backgroundColor: const Color.fromARGB(
-                                        255, 252, 219, 237),
+                                        255, 219, 237, 252), // Màu nền nút
                                     shadowColor: const Color.fromARGB(
-                                        255, 250, 226, 235),
+                                        255, 226, 235, 250),
                                   ).copyWith(
                                     elevation:
                                         WidgetStateProperty.all<double>(12),
                                     shadowColor: WidgetStateProperty.all<Color>(
-                                        Colors.pink[800]!),
+                                        Colors.blue[800]!),
                                   ),
                                   icon: const Icon(Icons.upload_file),
                                   label: const Text(
-                                      'Tải lên file .zip Hoá Đơn Bán Hàng'),
+                                      'Tải lên file Excel Ngân Hàng'),
                                 ),
-                                const VerticalDivider(thickness: 2, width: 40),
-                                // ElevatedButton.icon(
-                                //   onPressed: _pickExcelFile,
-                                //   style: ElevatedButton.styleFrom(
-                                //     padding: const EdgeInsets.symmetric(
-                                //         vertical: 16, horizontal: 32),
-                                //     textStyle: const TextStyle(fontSize: 18),
-                                //     elevation: 10,
-                                //     shape: RoundedRectangleBorder(
-                                //       borderRadius: BorderRadius.circular(10),
-                                //     ),
-                                //     backgroundColor: const Color.fromARGB(
-                                //         255, 219, 237, 252), // Màu nền nút
-                                //     shadowColor: const Color.fromARGB(
-                                //         255, 226, 235, 250),
-                                //   ).copyWith(
-                                //     elevation:
-                                //         WidgetStateProperty.all<double>(12),
-                                //     shadowColor: WidgetStateProperty.all<Color>(
-                                //         Colors.blue[800]!),
-                                //   ),
-                                //   icon: const Icon(Icons.upload_file),
-                                //   label: const Text(
-                                //       'Tải lên file Excel Ngân Hàng'),
-                                // ),
                               ]),
-                          const SizedBox(height: 20),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                if (_fileName != null)
-                                  const SizedBox(height: 20),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 200,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: uploadedFileBuy.length,
-                                      itemBuilder: (context, index) {
-                                        final file = uploadedFileBuy[index];
-                                        return Card(
-                                          elevation: 10,
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 16),
-                                          child: ListTile(
-                                            leading: const Icon(
-                                                Icons.file_present,
-                                                size: 40),
-                                            title: Text(file['name']!),
-                                            trailing: IconButton(
-                                              icon: const Icon(Icons.delete,
-                                                  color: Colors.red),
-                                              onPressed: () => removeFile(
-                                                  index, true), // Xóa file
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                          const SizedBox(height: 30),
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.black,
+                                  width: 2), // Viền đen bao cả khối
+                              borderRadius: BorderRadius.circular(
+                                  10), // Bo góc (tùy chọn)
+                            ),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (_fileName != null)
+                                    const SizedBox(height: 20),
+                                  CommonFileList(
+                                    title: "Nợ 152",
+                                    files: uploadedFileBuy1,
+                                    isBuy: true,
+                                    removeFile: removeFile,
+                                    debtCode: "No152",
                                   ),
-                                ),
-                                const SizedBox(width: 20),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 200,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: uploadedFileSale.length,
-                                      itemBuilder: (context, index) {
-                                        final file = uploadedFileSale[index];
-                                        return Card(
-                                          elevation: 10,
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 16),
-                                          child: ListTile(
-                                            leading: const Icon(
-                                                Icons.file_present,
-                                                size: 40),
-                                            title: Text(file['name']!),
-                                            trailing: IconButton(
-                                              icon: const Icon(Icons.delete,
-                                                  color: Colors.red),
-                                              onPressed: () => removeFile(
-                                                  index, false), // Xóa file
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                  CommonFileList(
+                                    title: "Nợ 156",
+                                    files: uploadedFileBuy2,
+                                    isBuy: true,
+                                    removeFile: removeFile,
+                                    debtCode: "No156",
                                   ),
-                                ),
-                                // const SizedBox(width: 20),
-                                // Expanded(
-                                //     child: SizedBox(
-                                //   height: 300,
-                                //   child: ListView.builder(
-                                //     itemCount: uploadedFiles.length,
-                                //     itemBuilder: (context, index) {
-                                //       final file = uploadedFiles[index];
-                                //       return Card(
-                                //         elevation: 10,
-                                //         margin: const EdgeInsets.symmetric(
-                                //             vertical: 8, horizontal: 16),
-                                //         child: ListTile(
-                                //           leading: const Icon(
-                                //               Icons.file_present,
-                                //               size: 40),
-                                //           title: Text(file['name'] ?? ''),
-                                //           trailing: IconButton(
-                                //             icon: const Icon(Icons.delete,
-                                //                 color: Colors.red),
-                                //             onPressed: () => _removeFile(index),
-                                //           ),
-                                //         ),
-                                //       );
-                                //     },
-                                //   ),
-                                // )),
-                              ]),
+                                  CommonFileList(
+                                    title: "Nợ 153",
+                                    files: uploadedFileBuy3,
+                                    isBuy: true,
+                                    removeFile: removeFile,
+                                    debtCode: "No153",
+                                  ),
+                                  CommonFileList(
+                                    title: "Nợ 211",
+                                    files: uploadedFileBuy4,
+                                    isBuy: true,
+                                    removeFile: removeFile,
+                                    debtCode: "No211",
+                                  ),
+                                  CommonFileList(
+                                    title: "Nợ 154",
+                                    files: uploadedFileBuy5,
+                                    isBuy: true,
+                                    removeFile: removeFile,
+                                    debtCode: "No154",
+                                  ),
+                                  CommonFileList(
+                                    title: "Nợ 642",
+                                    files: uploadedFileBuy6,
+                                    isBuy: true,
+                                    removeFile: removeFile,
+                                    debtCode: "No642",
+                                  ),
+                                  CommonFileList(
+                                    title: "Có 156",
+                                    files: uploadedFileSale1,
+                                    isBuy: false,
+                                    removeFile: removeFile,
+                                    debtCode: "Co156",
+                                  ),
+                                  CommonFileList(
+                                    title: "Có 155",
+                                    files: uploadedFileSale2,
+                                    isBuy: false,
+                                    removeFile: removeFile,
+                                    debtCode: "Co155",
+                                  ),
+                                  CommonFileList(
+                                    title: "Có 154",
+                                    files: uploadedFileSale3,
+                                    isBuy: false,
+                                    removeFile: removeFile,
+                                    debtCode: "Co154",
+                                  ),
+                                  CommonFileList(
+                                    title: "File Excel",
+                                    files: uploadedFiles,
+                                    isBuy: false,
+                                    removeFile: removeFile,
+                                    debtCode: "Excel",
+                                  ),
+                                ]),
+                          ),
                           const SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: uploadedFileSale.isNotEmpty ||
-                                    uploadedFileBuy.isNotEmpty
+                            onPressed: uploadedFileSale1.isNotEmpty ||
+                                    uploadedFileSale2.isNotEmpty ||
+                                    uploadedFileSale3.isNotEmpty ||
+                                    uploadedFileBuy1.isNotEmpty ||
+                                    uploadedFileBuy2.isNotEmpty ||
+                                    uploadedFileBuy3.isNotEmpty ||
+                                    uploadedFileBuy4.isNotEmpty ||
+                                    uploadedFileBuy5.isNotEmpty ||
+                                    uploadedFileBuy6.isNotEmpty
                                 ? convertToExcel
                                 : null, // Vô hiệu hóa nút nếu không có file
                             style: ElevatedButton.styleFrom(
@@ -788,8 +948,15 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                   vertical: 16, horizontal: 32),
                               textStyle: const TextStyle(fontSize: 18),
                               elevation: 13,
-                              backgroundColor: uploadedFileSale.isNotEmpty ||
-                                      uploadedFileBuy.isNotEmpty
+                              backgroundColor: uploadedFileSale1.isNotEmpty ||
+                                      uploadedFileSale2.isNotEmpty ||
+                                      uploadedFileSale3.isNotEmpty ||
+                                      uploadedFileBuy1.isNotEmpty ||
+                                      uploadedFileBuy2.isNotEmpty ||
+                                      uploadedFileBuy3.isNotEmpty ||
+                                      uploadedFileBuy4.isNotEmpty ||
+                                      uploadedFileBuy5.isNotEmpty ||
+                                      uploadedFileBuy6.isNotEmpty
                                   ? const Color.fromARGB(255, 219, 237,
                                       252) // Màu khi nút được kích hoạt
                                   : Colors.grey, // Màu khi nút bị vô hiệu hóa

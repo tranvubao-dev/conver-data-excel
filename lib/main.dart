@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:html_to_excel/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'sales_page.dart';
 import 'shopping_page.dart';
@@ -30,7 +32,46 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MainTabPage(),
+      home: const AuthCheck(),
+    );
+  }
+}
+
+// Kiểm tra trạng thái đăng nhập trước khi vào app
+class AuthCheck extends StatefulWidget {
+  const AuthCheck({super.key});
+
+  @override
+  State<AuthCheck> createState() => _AuthCheckState();
+}
+
+class _AuthCheckState extends State<AuthCheck> {
+  Future<bool> _isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastLogin = prefs.getInt('lastLogin') ?? 0;
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+
+    // Kiểm tra nếu đã hơn 1 giờ (3600000 ms)
+    if (currentTime - lastLogin > 3600000) {
+      return false; // Hết hạn, cần đăng nhập lại
+    }
+    return true; // Vẫn trong thời gian hợp lệ
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _isLoggedIn(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
+        } else if (snapshot.data == true) {
+          return const MainTabPage();
+        } else {
+          return const LoginPage();
+        }
+      },
     );
   }
 }
@@ -222,16 +263,11 @@ class _MainTabPageState extends State<MainTabPage> {
                       double screenWidth = MediaQuery.of(context).size.width;
                       if (screenWidth > 400) {
                         // Nếu màn hình đủ lớn thì hiển thị QR Code
-                        return Row(
+                        return const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Image.asset(
-                            //   'assets/tabbar.webp', // Thay bằng đường dẫn mã QR
-                            //   width: 40,
-                            //   height: 40,
-                            // ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.qr_code,
+                            SizedBox(width: 8),
+                            Icon(Icons.qr_code,
                                 color: Colors.black54), // Icon QR
                           ],
                         );
@@ -242,6 +278,18 @@ class _MainTabPageState extends State<MainTabPage> {
                   ),
                   onTap: () {
                     _showZaloPopup(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Logout'),
+                  onTap: () async {
+                    Navigator.pop(
+                        context); // Đóng Drawer trước khi chuyển trang
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                    );
                   },
                 ),
               ],

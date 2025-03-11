@@ -49,6 +49,9 @@ dependencies:
   flutter_fireworks: ^1.0.8
   url_launcher: ^6.3.1
   fuzzywuzzy: ^0.2.0
+  shared_preferences: ^2.2.2
+  shared_preferences_web: ^2.1.0
+  mysql1: ^0.20.0
 
 dev_dependencies:
   flutter_test:

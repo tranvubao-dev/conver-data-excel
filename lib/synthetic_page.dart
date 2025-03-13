@@ -359,9 +359,16 @@ class _SyntheticPageState extends State<SyntheticPage> {
               String counterFormatted = isBuy
                   ? getInvoiceCounter(invoiceCounterBuy, key)
                   : getInvoiceCounter(invoiceCounterSale, key);
+              String numberVotes = "CTKT";
+              if (value == "No642" || value == "Co154") {
+                numberVotes = "CTKT";
+              } else {
+                numberVotes =
+                    isBuy ? "PN$counterFormatted" : "PX$counterFormatted";
+              }
               return [
                 "",
-                isBuy ? "PN$counterFormatted" : "PX$counterFormatted",
+                numberVotes,
                 cleanedInvoiceNumber, // Ghi chú
                 dayElement, // Ngày
                 SafeValueHandler.safeValue(row, 2)
@@ -462,10 +469,17 @@ class _SyntheticPageState extends State<SyntheticPage> {
               String counterFormatted = isBuy
                   ? getInvoiceCounter(invoiceCounterBuy, key)
                   : getInvoiceCounter(invoiceCounterSale, key);
+              String numberVotes = "CTKT";
+              if (value == "No642" || value == "Co154") {
+                numberVotes = "CTKT";
+              } else {
+                numberVotes =
+                    isBuy ? "PN$counterFormatted" : "PX$counterFormatted";
+              }
               // Tạo một danh sách mới với chuỗi rỗng ở các vị trí cụ thể
               return [
                 "",
-                isBuy ? "PN$counterFormatted" : "PX$counterFormatted",
+                numberVotes,
                 cleanedInvoiceNumber, // Ghi chú
                 dayElement, // Ngày
                 SafeValueHandler.safeValue(row, 2)

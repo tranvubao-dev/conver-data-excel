@@ -521,7 +521,6 @@ class ExcelUtils {
         }
       }
     }
-/////////Tạo thêm sheet mới /////////////
 // // Thêm dữ liệu vào sheet hàng hoá
     List<List<String>> transformedData = [];
     Set<String> seenCodeMH = {}; // Set lưu các mã mặt hàng đã xuất hiện
@@ -612,42 +611,41 @@ class ExcelUtils {
         String customerNameBuy = row[38]; // Tên người mua
         String customerAddressBuy = row[39]; // Địa chỉ người mua
 
-        // Nếu không phải hàng header và codeMH đã tồn tại thì bỏ qua
-        if (i != 0 && seenCodeCustomer.contains(codeCustomer)) {
-          continue;
+        // Nếu codeCustomer chưa tồn tại, thêm vào danh sách
+        if (!seenCodeCustomer.contains(codeCustomer)) {
+          seenCodeCustomer.add(codeCustomer);
+
+          List<String> newRowBuy = [
+            codeCustomer,
+            nameCustomer,
+            customerPhone,
+            "",
+            customerAddress,
+            "",
+            person,
+            codeCustomer
+          ];
+          customerData.add(newRowBuy);
         }
-        // Thêm codeMH vào set để kiểm tra cho các hàng sau
-        seenCodeCustomer.add(codeCustomer);
-        List<String> newRowBuy;
 
-        newRowBuy = [
-          codeCustomer,
-          nameCustomer,
-          customerPhone,
-          "",
-          customerAddress,
-          "",
-          person,
-          codeCustomer
-        ];
-        customerData.add(newRowBuy);
+        // Kiểm tra xem người phụ trách đã xuất hiện chưa
+        if (!seenCodeCustomer.contains(person) && person.isNotEmpty) {
+          seenCodeCustomer.add(person);
 
-        if (seenCodeCustomer.contains(person)) {
-          continue;
+          List<String> newRowSale = [
+            person,
+            customerNameBuy,
+            "",
+            "",
+            customerAddressBuy,
+            "",
+            codeCustomer,
+            person
+          ];
+          customerData.add(newRowSale);
         }
-        seenCodeCustomer.add(person);
-
-        List<String> newRowSale = [
-          person,
-          customerNameBuy,
-          "",
-          "",
-          customerAddressBuy,
-          "",
-          codeCustomer,
-          person
-        ];
-        customerData.add(newRowSale);
+      } else {
+        print("Dòng $i không đủ dữ liệu, bỏ qua.");
       }
     }
 

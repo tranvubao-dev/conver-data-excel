@@ -40,6 +40,9 @@ class _SyntheticPageState extends State<SyntheticPage> {
   //////////////
   List<Map<String, String>> uploadedFiles = [];
 
+  Map<String, int> invoiceCounterSale = {};
+  Map<String, int> invoiceCounterBuy = {};
+
   void resetState() {
     setState(() {
       dataExcel = []; // Đặt lại thanh tiêu đề
@@ -247,6 +250,13 @@ class _SyntheticPageState extends State<SyntheticPage> {
               .querySelectorAll('.list-fill-out .data-item')[1]
               .querySelector('.di-value div')!
               .text;
+
+          String detail;
+          if (value == "Co156" || value == "Co155" || value == "Co154") {
+            detail = "";
+          } else {
+            detail = customerCode;
+          }
           ///////////////////////////////////////////////
           var customerAddress = document // Địa chỉ người bán
               .querySelectorAll('.list-fill-out .data-item')[2]
@@ -264,11 +274,17 @@ class _SyntheticPageState extends State<SyntheticPage> {
               .text;
 
           ///////////////////////////////////////////////
-          var customerNames = document // Tên người mua
+          var customerNameBuy = document // Tên người mua
               .querySelectorAll('.list-fill-out .data-item')[5]
               .querySelector('.di-value div')!
               .text;
-          ///////////// tổng tiền thuế
+          ///////////////////////////////////////////////
+          var customerAddressBuy = document // Địa chỉ người mua
+              .querySelectorAll('.list-fill-out .data-item')[8]
+              .querySelector('.di-value div')!
+              .text;
+
+          ///
           bool checkTitle =
               (titleHeading.trim().toUpperCase() == "HOÁ ĐƠN GIÁ TRỊ GIA TĂNG");
           var taxMoney;
@@ -339,10 +355,13 @@ class _SyntheticPageState extends State<SyntheticPage> {
           // Hoá đơn giá trị gia tăng
           if (titleHeading.trim().toUpperCase() == "HOÁ ĐƠN GIÁ TRỊ GIA TĂNG") {
             dataExcelDetail = rows.map((row) {
-              // Tạo một danh sách mới với chuỗi rỗng ở các vị trí cụ thể
+              String key = "$cleanedInvoiceNumber - $dayElement";
+              String counterFormatted = isBuy
+                  ? getInvoiceCounter(invoiceCounterBuy, key)
+                  : getInvoiceCounter(invoiceCounterSale, key);
               return [
                 "",
-                "",
+                isBuy ? "PN$counterFormatted" : "PX$counterFormatted",
                 cleanedInvoiceNumber, // Ghi chú
                 dayElement, // Ngày
                 SafeValueHandler.safeValue(row, 2)
@@ -380,7 +399,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 isBuy ? value.substring(2) : "632",
                 "",
                 isBuy ? "331" : value.substring(2),
-                customerCode,
+                detail,
 ///////////////////////////
                 dayElement, // Ngày
                 sttNumber, // Thứ tự
@@ -431,16 +450,22 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 cleanedInvoiceNumber, // Ghi chú
                 "", // S/L phụ
                 customerAddress, // Địa chỉ
-                customerPhone, // Số điện thoại
+                customerPhone, // Số điện thoại người bán
+                customerNameBuy, // Tên người mua
+                customerAddressBuy, // Địa chỉ người mua
               ];
             }).toList();
           } else {
             ///HOÁ ĐƠN BÁN HÀNG
             dataExcelDetail = rows.map((row) {
+              String key = "$cleanedInvoiceNumber - $dayElement";
+              String counterFormatted = isBuy
+                  ? getInvoiceCounter(invoiceCounterBuy, key)
+                  : getInvoiceCounter(invoiceCounterSale, key);
               // Tạo một danh sách mới với chuỗi rỗng ở các vị trí cụ thể
               return [
                 "",
-                "",
+                isBuy ? "PN$counterFormatted" : "PX$counterFormatted",
                 cleanedInvoiceNumber, // Ghi chú
                 dayElement, // Ngày
                 SafeValueHandler.safeValue(row, 2)
@@ -474,7 +499,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 isBuy ? value.substring(2) : "632",
                 "",
                 isBuy ? "331" : value.substring(2),
-                customerCode,
+                detail,
 
                 /////////
                 dayElement, // Ngày
@@ -524,7 +549,9 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 cleanedInvoiceNumber, // Ghi chú
                 "", // S/L phụ
                 customerAddress, // Địa chỉ
-                customerPhone, // Số điện thoại
+                customerPhone, // Số điện thoại người bán
+                customerNameBuy, // Tên người mua
+                customerAddressBuy, // Địa chỉ người mua
               ];
             }).toList();
           }
@@ -542,8 +569,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
               taxMoney.replaceAll(".", ""),
               isBuy ? "1331" : "131",
               isBuy ? "" : buyerCode,
-              isBuy ? "" : "3331",
-              "",
+              isBuy ? "331" : "3331",
+              isBuy ? customerCode : "",
             ], // Thanh tieu de
           ];
 
@@ -553,7 +580,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               "",
               cleanedInvoiceNumber,
               dayElement,
-              customerNames,
+              customerNameBuy,
               "",
               "",
               "",
@@ -580,52 +607,41 @@ class _SyntheticPageState extends State<SyntheticPage> {
       }
     });
 
-    List<List<String>> sortedData = List.from(dataExcel);
-
-// Bước 1: Sắp xếp theo ngày và loại dữ liệu (giữ logic cũ)
-    sortedData.sort((a, b) {
-      DateTime dateA = parseDate(a[3]);
-      DateTime dateB = parseDate(b[3]);
-
-      // Nếu ngày khác nhau, sắp xếp theo ngày
-      if (dateA.compareTo(dateB) != 0) {
-        return dateA.compareTo(dateB);
-      }
-
-      // Xác định giá trị ưu tiên từ cột a[12], nếu rỗng thì lấy a[10]
-      String valueA = a[12].isNotEmpty ? a[12] : a[10];
-      String valueB = b[12].isNotEmpty ? b[12] : b[10];
-
-      bool isACompany = valueA.contains("511");
-      bool isBCompany = valueB.contains("511");
-      bool isATax = valueA.contains("3331") || valueA.contains("1331");
-      bool isBTax = valueB.contains("3331") || valueB.contains("1331");
-
-      if (isATax && !isBTax) return 1; // "Tiền thuế" xuống cuối
-      if (!isATax && isBTax) return -1; // "Tiền thuế" xuống cuối
-
-      if (isACompany && !isBCompany) return 1; // "CÔNG TY" xuống dưới sản phẩm
-      if (!isACompany && isBCompany) return -1; // "CÔNG TY" xuống dưới sản phẩm
-
-      return 0; // Giữ nguyên thứ tự nếu cùng loại
-    });
-
-// Bước 2: Gom nhóm các phần tử có cùng a[2] lại gần nhau
     Map<String, List<List<String>>> groupedData = {};
+    for (var row in dataExcel) {
+      if (row.length > 3) {
+        String invoiceNumber = row[2]; // "Số:1514" hoặc "Số:1492"
+        String date = row[3];
+        String key = "$invoiceNumber - $date";
 
-// Nhóm các phần tử dựa trên giá trị của a[2]
-    for (var row in sortedData) {
-      String key = row[2]; // Lấy giá trị của cột a[2]
-      if (!groupedData.containsKey(key)) {
-        groupedData[key] = [];
+        if (!groupedData.containsKey(key)) {
+          groupedData[key] = [];
+        }
+        groupedData[key]!.add(row);
       }
-      groupedData[key]!.add(row);
     }
 
-// Bước 3: Ghép các nhóm lại thành danh sách cuối cùng
-    sortedData = groupedData.values.expand((element) => element).toList();
+    // Bước 2: Sắp xếp nhóm theo ngày row[3]
+    var sortedEntries = groupedData.entries.toList()
+      ..sort((a, b) {
+        String dateA = a.value.first[3]; // Lấy ngày từ nhóm A
+        String dateB = b.value.first[3]; // Lấy ngày từ nhóm B
 
-    List<List<String>> convertedData = sortedData.map((row) {
+        DateTime parsedDateA = DateTime.parse(
+            "${dateA.substring(4, 8)}-${dateA.substring(2, 4)}-${dateA.substring(0, 2)}");
+        DateTime parsedDateB = DateTime.parse(
+            "${dateB.substring(4, 8)}-${dateB.substring(2, 4)}-${dateB.substring(0, 2)}");
+        return parsedDateA.compareTo(parsedDateB); // Sắp xếp tăng dần theo ngày
+      });
+
+    // Bước 3: Chuyển về List<List<String>>
+    List<List<String>> sortedDataDay = [];
+    for (var entry in sortedEntries) {
+      sortedDataDay.addAll(
+          entry.value); // Thêm tất cả dòng của nhóm vào danh sách kết quả
+    }
+
+    List<List<String>> convertedData = sortedDataDay.map((row) {
       String rawDate = row[3]; // Lấy ngày dạng ddMMyyyy
       if (rawDate.length == 8) {
         String formattedDate =
@@ -635,11 +651,46 @@ class _SyntheticPageState extends State<SyntheticPage> {
       return row;
     }).toList();
 
+    int dataNumberPN = 1;
+    int dataNumberPX = 1;
+    String previousRow2 = ""; // Lưu giá trị row[2] của dòng trước đó
+    String previousRow1 = ""; // Lưu giá trị row[1] của dòng trước đó
+
+    for (var row in convertedData) {
+      if (row.length > 2 && row[1].isNotEmpty) {
+        String prefix = row[1].substring(0, 2);
+        if (row[2] == previousRow2) {
+          row[1] = previousRow1;
+        } else {
+          if (prefix == "PN") {
+            row[1] = "PN$dataNumberPN";
+            dataNumberPN++;
+          } else if (prefix == "PX") {
+            row[1] = "PX$dataNumberPX";
+            dataNumberPX++;
+          } else {
+            print("Không xác định");
+          }
+        }
+
+        // Cập nhật giá trị của dòng trước đó
+        previousRow2 = row[2];
+        previousRow1 = row[1];
+      }
+    }
+
     ExcelUtils.createExcel(convertedData, "FileTổngHợp .xlsx");
     resetState();
     // firework();
 
     /// Pháo hoa
+  }
+
+  String getInvoiceCounter(Map<String, int> invoiceCounter, String key) {
+    if (!invoiceCounter.containsKey(key)) {
+      invoiceCounter[key] = invoiceCounter.length + 1;
+    }
+    return invoiceCounter[key]!.toString().padLeft(3, '0');
   }
 
   void _pickExcelFile() async {

@@ -1,0 +1,26 @@
+2025/03/13-10:19:11.192 9b03 Reusing MANIFEST /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.zI2Six/flutter_tools_chrome_device.2godpd/Default/shared_proto_db/MANIFEST-000001
+2025/03/13-10:19:11.192 9b03 Recovering log #42
+2025/03/13-10:19:11.194 9b03 Reusing old log /private/var/folders/5y/4tv_23596rn50kzclmj38s2m0000gn/T/flutter_tools.zI2Six/flutter_tools_chrome_device.2godpd/Default/shared_proto_db/000042.log 
+2025/03/13-10:19:11.194 9b03 Delete type=0 #11
+2025/03/13-10:19:11.194 9b03 Delete type=0 #14
+2025/03/13-10:19:11.194 9b03 Delete type=0 #3
+2025/03/13-10:19:11.194 9b03 Delete type=2 #15
+2025/03/13-10:19:11.194 9b03 Delete type=2 #7
+2025/03/13-10:19:11.194 9b03 Delete type=2 #12
+2025/03/13-10:19:11.194 9b03 Delete type=2 #9
+2025/03/13-10:19:11.194 9b03 Delete type=0 #8
+2025/03/13-10:19:24.271 a707 Level-0 table #46: started
+2025/03/13-10:19:24.274 a707 Level-0 table #46: 378685 bytes OK
+2025/03/13-10:19:24.276 a707 Delete type=0 #42
+2025/03/13-10:19:24.277 a707 Compacting 4@0 + 1@1 files
+2025/03/13-10:19:24.279 a707 Generated table #47@0: 333 keys, 34437 bytes
+2025/03/13-10:19:24.279 a707 Compacted 4@0 + 1@1 files => 34437 bytes
+2025/03/13-10:19:24.280 a707 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/03/13-10:19:24.280 a707 Delete type=2 #39
+2025/03/13-10:19:24.280 a707 Delete type=2 #37
+2025/03/13-10:19:24.280 a707 Delete type=2 #43
+2025/03/13-10:19:24.280 a707 Delete type=2 #41
+2025/03/13-10:19:24.281 a707 Delete type=2 #46
+2025/03/13-11:19:47.864 9b03 Level-0 table #49: started
+2025/03/13-11:19:47.873 9b03 Level-0 table #49: 632297 bytes OK
+2025/03/13-11:19:47.876 9b03 Delete type=0 #45

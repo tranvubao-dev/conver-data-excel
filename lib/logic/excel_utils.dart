@@ -412,7 +412,7 @@ class ExcelUtils {
     // Danh sách tiêu đề hàng 1
     List<String> header1 = [
       'STT',
-      'Ngày tháng ghi sổ',
+      'Số phiếu',
       'Chứng từ',
       '',
       'Diễn giải',
@@ -609,6 +609,8 @@ class ExcelUtils {
         String customerPhone; // Điện thoại
         customerAddress = row[36]; // Địa chỉ công ty
         customerPhone = row[37]; // Điện thoại
+        String customerNameBuy = row[38]; // Tên người mua
+        String customerAddressBuy = row[39]; // Địa chỉ người mua
 
         // Nếu không phải hàng header và codeMH đã tồn tại thì bỏ qua
         if (i != 0 && seenCodeCustomer.contains(codeCustomer)) {
@@ -616,9 +618,9 @@ class ExcelUtils {
         }
         // Thêm codeMH vào set để kiểm tra cho các hàng sau
         seenCodeCustomer.add(codeCustomer);
-        List<String> newRow;
+        List<String> newRowBuy;
 
-        newRow = [
+        newRowBuy = [
           codeCustomer,
           nameCustomer,
           customerPhone,
@@ -628,7 +630,24 @@ class ExcelUtils {
           person,
           codeCustomer
         ];
-        customerData.add(newRow);
+        customerData.add(newRowBuy);
+
+        if (seenCodeCustomer.contains(person)) {
+          continue;
+        }
+        seenCodeCustomer.add(person);
+
+        List<String> newRowSale = [
+          person,
+          customerNameBuy,
+          "",
+          "",
+          customerAddressBuy,
+          "",
+          codeCustomer,
+          person
+        ];
+        customerData.add(newRowSale);
       }
     }
 

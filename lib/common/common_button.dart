@@ -10,7 +10,7 @@ class CommonButton extends StatelessWidget {
   final Color disabledColor;
 
   const CommonButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.label,
     this.icon,
@@ -18,7 +18,7 @@ class CommonButton extends StatelessWidget {
     this.elevation = 10,
     this.enabledColor = const Color.fromARGB(255, 219, 237, 252),
     this.disabledColor = Colors.grey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

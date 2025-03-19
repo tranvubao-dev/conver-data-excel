@@ -58,16 +58,16 @@ class _ShoppingPageState extends State<ShoppingPage> {
   final fireworksController = FireworksController(
     // Define a list of colors for the fireworks explosions
     colors: [
-      Color(0xFFFF4C40), // Coral
-      Color(0xFF6347A6), // Purple Haze
-      Color(0xFF7FB13B), // Greenery
-      Color(0xFF82A0D1), // Serenity Blue
-      Color(0xFFF7B3B2), // Rose Quartz
-      Color(0xFF864542), // Marsala
-      Color(0xFFB04A98), // Orchid
-      Color(0xFF008F6C), // Sea Green
-      Color(0xFFFFD033), // Pastel Yellow
-      Color(0xFFFF6F7C), // Pink Grapefruit
+      const Color(0xFFFF4C40), // Coral
+      const Color(0xFF6347A6), // Purple Haze
+      const Color(0xFF7FB13B), // Greenery
+      const Color(0xFF82A0D1), // Serenity Blue
+      const Color(0xFFF7B3B2), // Rose Quartz
+      const Color(0xFF864542), // Marsala
+      const Color(0xFFB04A98), // Orchid
+      const Color(0xFF008F6C), // Sea Green
+      const Color(0xFFFFD033), // Pastel Yellow
+      const Color(0xFFFF6F7C), // Pink Grapefruit
     ],
     // The fastest explosion in seconds
     minExplosionDuration: 0.5,
@@ -86,7 +86,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
     fireworksController.fireMultipleRockets(
         minRockets: 20,
         maxRockets: 50,
-        launchWindow: Duration(milliseconds: 600));
+        launchWindow: const Duration(milliseconds: 600));
   }
 
   void resetState() {

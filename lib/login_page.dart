@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: _usernameController,
                         decoration: InputDecoration(
                           labelText: 'Tài khoản',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           errorText: _errorText,
                         ),
                       ),
@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: _passwordController,
                         decoration: InputDecoration(
                           labelText: 'Mật khẩu',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           errorText: _errorText,
                         ),
                         obscureText: true,

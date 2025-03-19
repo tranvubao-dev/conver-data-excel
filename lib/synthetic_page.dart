@@ -1,14 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_fireworks/fireworks_controller.dart';
+import 'package:flutter_fireworks/fireworks_display.dart';
 import 'package:html/parser.dart';
 import 'package:html_to_excel/common/common_file_list.dart';
 import 'package:html_to_excel/logic/excel_utils.dart';
 import 'package:html_to_excel/logic/safe_value.dart';
 import 'package:html_to_excel/logic/zip_file_utils.dart';
 import 'logic/code_generator.dart';
+import 'package:lottie/lottie.dart';
 import 'dart:html' as html; // Dành cho tải file trong Flutter web
 
 class SyntheticPage extends StatefulWidget {
@@ -21,7 +25,6 @@ class SyntheticPage extends StatefulWidget {
 class _SyntheticPageState extends State<SyntheticPage> {
   Uint8List? barcodePng;
   String? barcodeSvg;
-  // List<Map<String, dynamic>> uploadedFileSale =
   //     []; // List để lưu các file hoá đơn bán hàng
   List<Map<String, dynamic>> uploadedFileSale1 = [];
   List<Map<String, dynamic>> uploadedFileSale2 = [];
@@ -42,6 +45,36 @@ class _SyntheticPageState extends State<SyntheticPage> {
 
   Map<String, int> invoiceCounterSale = {};
   Map<String, int> invoiceCounterBuy = {};
+  final StreamController<double> _progressController =
+      StreamController<double>.broadcast();
+  Stream<double> get progressStream => _progressController.stream;
+  bool isProcessing = false; // Biến kiểm soát trạng thái của nút
+
+  final fireworksController = FireworksController(
+    // Define a list of colors for the fireworks explosions
+    colors: [
+      const Color(0xFFFF4C40), // Coral
+      const Color(0xFF6347A6), // Purple Haze
+      const Color(0xFF7FB13B), // Greenery
+      const Color(0xFF82A0D1), // Serenity Blue
+      const Color(0xFFF7B3B2), // Rose Quartz
+      const Color(0xFF864542), // Marsala
+      const Color(0xFFB04A98), // Orchid
+      const Color(0xFF008F6C), // Sea Green
+      const Color(0xFFFFD033), // Pastel Yellow
+      const Color(0xFFFF6F7C), // Pink Grapefruit
+    ],
+    // The fastest explosion in seconds
+    minExplosionDuration: 0.5,
+    // The slowest explosion in seconds
+    maxExplosionDuration: 3.5,
+    // The minimum number of particles in an explosion
+    minParticleCount: 125,
+    // The maximum number of particles in an explosion
+    maxParticleCount: 275,
+    // The duration for particles to fade out in seconds
+    fadeOutDuration: 0.4,
+  );
 
   void resetState() {
     setState(() {
@@ -60,6 +93,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
   }
 
   void handlePickZipFiles(bool isBuy, String value) async {
+    _progressController.add(0);
     // Sử dụng hàm từ file zip_file_utils.dart
     final files = await ZipFileUtils.pickZipFiles();
 
@@ -181,14 +215,22 @@ class _SyntheticPageState extends State<SyntheticPage> {
     });
   }
 
-  void convertToExcel() {
+  void convertToExcel() async {
+    if (isProcessing) return; // Chặn nhấp liên tiếp
+    setState(() {
+      isProcessing = true; // Đánh dấu đang chạy tiến trình
+    });
+    int totalFiles = _htmlContents.length;
+    int processedFiles = 0;
+
     // dataExcel.addAll(listTitle);
-    _htmlContents.forEach((fileName, data) {
-      bool isBuy = (data as Map<String, dynamic>)['isBuy']; // Lấy giá trị isBuy
-      String value =
-          (data as Map<String, dynamic>)['value']; // Lấy giá trị value
-      String content =
-          (data as Map<String, dynamic>)['content']; // Lấy nội dung hóa đơn
+    // _htmlContents.forEach((fileName, data) {
+    for (var fileName in _htmlContents.keys) {
+      var data = _htmlContents[fileName] as Map<String, dynamic>;
+
+      bool isBuy = (data)['isBuy']; // Lấy giá trị isBuy
+      String value = (data)['value']; // Lấy giá trị value
+      String content = (data)['content']; // Lấy nội dung hóa đơn
       try {
         final document = parse(content);
         // Lấy nội dung trong thẻ <body>
@@ -287,7 +329,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
           ///
           bool checkTitle =
               (titleHeading.trim().toUpperCase() == "HOÁ ĐƠN GIÁ TRỊ GIA TĂNG");
-          var taxMoney;
+          String taxMoney;
 
           if (checkTitle) {
             var titletaxMoney = document
@@ -619,7 +661,12 @@ class _SyntheticPageState extends State<SyntheticPage> {
       } catch (e) {
         print('Đã xảy ra lỗi: $e');
       }
-    });
+      processedFiles++;
+      double progress = (processedFiles / totalFiles) * 100;
+      await Future.delayed(const Duration(milliseconds: 5), () {
+        _progressController.add(progress); // Cập nhật tiến trình
+      });
+    }
 
     Map<String, List<List<String>>> groupedData = {};
     for (var row in dataExcel) {
@@ -695,9 +742,12 @@ class _SyntheticPageState extends State<SyntheticPage> {
 
     ExcelUtils.createExcel(convertedData, "FileTổngHợp .xlsx");
     resetState();
-    // firework();
+    firework();
 
     /// Pháo hoa
+    setState(() {
+      isProcessing = false; // Cho phép nhấn lại sau khi hoàn thành
+    });
   }
 
   String getInvoiceCounter(Map<String, int> invoiceCounter, String key) {
@@ -705,6 +755,13 @@ class _SyntheticPageState extends State<SyntheticPage> {
       invoiceCounter[key] = invoiceCounter.length + 1;
     }
     return invoiceCounter[key]!.toString().padLeft(3, '0');
+  }
+
+  void firework() {
+    fireworksController.fireMultipleRockets(
+        minRockets: 20,
+        maxRockets: 50,
+        launchWindow: const Duration(milliseconds: 600));
   }
 
   void _pickExcelFile() async {
@@ -753,11 +810,13 @@ class _SyntheticPageState extends State<SyntheticPage> {
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Center(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -884,30 +943,30 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                         'Tải lên file .zip Hoá Đơn Bán Hàng'),
                                   ),
                                 ),
-                                ElevatedButton.icon(
-                                  onPressed: _pickExcelFile,
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16, horizontal: 32),
-                                    textStyle: const TextStyle(fontSize: 18),
-                                    elevation: 10,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    backgroundColor: const Color.fromARGB(
-                                        255, 219, 237, 252), // Màu nền nút
-                                    shadowColor: const Color.fromARGB(
-                                        255, 226, 235, 250),
-                                  ).copyWith(
-                                    elevation:
-                                        WidgetStateProperty.all<double>(12),
-                                    shadowColor: WidgetStateProperty.all<Color>(
-                                        Colors.blue[800]!),
-                                  ),
-                                  icon: const Icon(Icons.upload_file),
-                                  label: const Text(
-                                      'Tải lên file Excel Ngân Hàng'),
-                                ),
+                                // ElevatedButton.icon(
+                                //   onPressed: _pickExcelFile,
+                                //   style: ElevatedButton.styleFrom(
+                                //     padding: const EdgeInsets.symmetric(
+                                //         vertical: 16, horizontal: 32),
+                                //     textStyle: const TextStyle(fontSize: 18),
+                                //     elevation: 10,
+                                //     shape: RoundedRectangleBorder(
+                                //       borderRadius: BorderRadius.circular(10),
+                                //     ),
+                                //     backgroundColor: const Color.fromARGB(
+                                //         255, 219, 237, 252), // Màu nền nút
+                                //     shadowColor: const Color.fromARGB(
+                                //         255, 226, 235, 250),
+                                //   ).copyWith(
+                                //     elevation:
+                                //         WidgetStateProperty.all<double>(12),
+                                //     shadowColor: WidgetStateProperty.all<Color>(
+                                //         Colors.blue[800]!),
+                                //   ),
+                                //   icon: const Icon(Icons.upload_file),
+                                //   label: const Text(
+                                //       'Tải lên file Excel Ngân Hàng'),
+                                // ),
                               ]),
                           const SizedBox(height: 30),
                           Container(
@@ -986,13 +1045,13 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                     removeFile: removeFile,
                                     debtCode: "Co154",
                                   ),
-                                  CommonFileList(
-                                    title: "File Excel",
-                                    files: uploadedFiles,
-                                    isBuy: false,
-                                    removeFile: removeFile,
-                                    debtCode: "Excel",
-                                  ),
+                                  // CommonFileList(
+                                  //   title: "File Excel",
+                                  //   files: uploadedFiles,
+                                  //   isBuy: false,
+                                  //   removeFile: removeFile,
+                                  //   debtCode: "Excel",
+                                  // ),
                                 ]),
                           ),
                           const SizedBox(height: 20),
@@ -1028,7 +1087,77 @@ class _SyntheticPageState extends State<SyntheticPage> {
                             ),
                             child: const Text('Tạo File tổng hợp Excel'),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 50),
+                          StreamBuilder<double>(
+                            stream: progressStream,
+                            builder: (context, snapshot) {
+                              double progress = (snapshot.data ?? 0) / 100;
+                              double maxWidth =
+                                  MediaQuery.of(context).size.width /
+                                      2; // Chiều dài thanh tiến trình
+                              return SizedBox(
+                                width: maxWidth,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(0),
+                                  child: Column(
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          // Thanh tiến trình bo tròn
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: SizedBox(
+                                              height: 14,
+                                              child: LinearProgressIndicator(
+                                                value: progress,
+                                                minHeight: 14,
+                                                backgroundColor:
+                                                    Colors.grey[300],
+                                                valueColor:
+                                                    const AlwaysStoppedAnimation<
+                                                        Color>(Colors.blue),
+                                              ),
+                                            ),
+                                          ),
+                                          // Icon con chó chạy trên thanh tiến trình
+                                          AnimatedAlign(
+                                            duration: const Duration(
+                                                milliseconds:
+                                                    2), // Cập nhật ngay khi progress thay đổi
+                                            alignment: Alignment(
+                                                (progress * 2) -
+                                                    1, // Chuyển progress thành vị trí trên thanh
+                                                0), // Giữ icon nằm trên thanh tiến trình
+                                            child: Transform.translate(
+                                              offset: const Offset(0,
+                                                  -50), // Dịch chuyển icon lên trên 12 pixel
+                                              child: Lottie.asset(
+                                                'assets/run.json', // Animation từ ảnh cá nhân của bạn
+                                                width: 50,
+                                                height: 50,
+                                                repeat: true,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        '${(progress * 100).toStringAsFixed(1)}%',
+                                        style: const TextStyle(
+                                          fontSize: 15, // Tăng kích thước chữ
+                                          fontWeight: FontWeight
+                                              .bold, // Làm chữ đậm hơn
+                                          color:
+                                              Colors.red, // Đổi màu chữ sang đỏ
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -1037,9 +1166,9 @@ class _SyntheticPageState extends State<SyntheticPage> {
               ),
             ),
           ),
-          // Container(
-          //   child: FireworksDisplay(controller: fireworksController),
-          // ),
+          Container(
+            child: FireworksDisplay(controller: fireworksController),
+          ),
         ]));
   }
 

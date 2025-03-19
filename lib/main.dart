@@ -91,7 +91,7 @@ class _MainTabPageState extends State<MainTabPage> {
     ShoppingPage(),
     SalesPage(),
     CreateCodePage(),
-    FilterDataPage(),
+    // FilterDataPage(),
     SyntheticPage(),
   ];
 
@@ -174,7 +174,7 @@ class _MainTabPageState extends State<MainTabPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 5, // Số lượng tab
+        length: 4, // Số lượng tab
         initialIndex: _currentIndex, // Tab mặc định
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -200,9 +200,9 @@ class _MainTabPageState extends State<MainTabPage> {
                 Tab(icon: Icon(Icons.shopping_cart), text: 'Template Mua Hàng'),
                 Tab(icon: Icon(Icons.storefront), text: 'Template Bán Hàng'),
                 Tab(icon: Icon(Icons.barcode_reader), text: 'Tạo Mã'),
-                Tab(
-                    icon: Icon(Icons.filter_alt_sharp),
-                    text: 'Lọc mã sản phẩm'),
+                // Tab(
+                //     icon: Icon(Icons.filter_alt_sharp),
+                //     text: 'Lọc mã sản phẩm'),
                 Tab(icon: Icon(Icons.summarize), text: 'File tổng hợp'),
               ],
             ),
@@ -353,6 +353,8 @@ class _MainTabPageState extends State<MainTabPage> {
 
 // Trang Cài đặt
 class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

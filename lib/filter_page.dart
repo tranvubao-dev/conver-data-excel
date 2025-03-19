@@ -98,9 +98,7 @@ class _FilterDataPageState extends State<FilterDataPage> {
             table.rows[i].map((cell) => cell?.value?.toString() ?? "").toList();
 
         // Kiểm tra nếu không có cột A hoặc giá trị cột A bị rỗng
-        if (rowData.isEmpty ||
-            rowData.length < 1 ||
-            rowData[0].trim().isEmpty) {
+        if (rowData.isEmpty || rowData.isEmpty || rowData[0].trim().isEmpty) {
           print("Bỏ qua dòng $i vì cột A trống.");
           continue;
         }
@@ -148,7 +146,7 @@ class _FilterDataPageState extends State<FilterDataPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // ElevatedButton.icon(

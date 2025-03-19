@@ -8,13 +8,13 @@ class CommonFileList extends StatelessWidget {
   final String debtCode; // Mã nợ (No156, No153, No211,...)
 
   const CommonFileList({
-    Key? key,
+    super.key,
     required this.title,
     required this.files,
     required this.isBuy,
     required this.removeFile,
     required this.debtCode,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class CommonFileList extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 300,
+            height: MediaQuery.of(context).size.height / 3.5,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: files.length,

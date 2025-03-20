@@ -104,7 +104,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
             uploadedFileSale1 = files;
           } else if (value == "Co155") {
             uploadedFileSale2 = files;
-          } else if (value == "Co154") {
+          } else if (value == "Co152") {
             uploadedFileSale3 = files;
           }
         } else {
@@ -153,7 +153,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               } else if (value == "Co155") {
                 index = uploadedFileSale2
                     .indexWhere((f) => f['name'] == file['name']);
-              } else if (value == "Co154") {
+              } else if (value == "Co152") {
                 index = uploadedFileSale3
                     .indexWhere((f) => f['name'] == file['name']);
               }
@@ -206,7 +206,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
           uploadedFileSale1.removeAt(index);
         } else if (value == "Co155") {
           uploadedFileSale2.removeAt(index);
-        } else if (value == "Co154") {
+        } else if (value == "Co152") {
           uploadedFileSale3.removeAt(index);
         } else {
           uploadedFiles.removeAt(index);
@@ -294,7 +294,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               .text;
 
           String detail;
-          if (value == "Co156" || value == "Co155" || value == "Co154") {
+          if (value == "Co156" || value == "Co155" || value == "Co152") {
             detail = "";
           } else {
             detail = customerCode;
@@ -402,7 +402,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                   ? getInvoiceCounter(invoiceCounterBuy, key)
                   : getInvoiceCounter(invoiceCounterSale, key);
               String numberVotes = "CTKT";
-              if (value == "No642" || value == "Co154") {
+              if (value == "No642") {
                 numberVotes = "CTKT";
               } else {
                 numberVotes =
@@ -445,7 +445,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
-                isBuy ? value.substring(2) : "632",
+                isBuy ? value.substring(2) : "1541",
                 "",
                 isBuy ? "331" : value.substring(2),
                 detail,
@@ -512,7 +512,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                   ? getInvoiceCounter(invoiceCounterBuy, key)
                   : getInvoiceCounter(invoiceCounterSale, key);
               String numberVotes = "CTKT";
-              if (value == "No642" || value == "Co154") {
+              if (value == "No642") {
                 numberVotes = "CTKT";
               } else {
                 numberVotes =
@@ -552,7 +552,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
-                isBuy ? value.substring(2) : "632",
+                isBuy ? value.substring(2) : "1541",
                 "",
                 isBuy ? "331" : value.substring(2),
                 detail,
@@ -906,7 +906,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                       child: Text('Doanh thu bán thành phẩm'),
                                     ),
                                     const PopupMenuItem(
-                                      value: "Co154",
+                                      value: "Co152",
                                       child: Text('Doanh thu cung cấp dịch vụ'),
                                     ),
                                   ],
@@ -1039,11 +1039,11 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                     debtCode: "Co155",
                                   ),
                                   CommonFileList(
-                                    title: "Có 154",
+                                    title: "Có 152",
                                     files: uploadedFileSale3,
                                     isBuy: false,
                                     removeFile: removeFile,
-                                    debtCode: "Co154",
+                                    debtCode: "Co152",
                                   ),
                                   // CommonFileList(
                                   //   title: "File Excel",

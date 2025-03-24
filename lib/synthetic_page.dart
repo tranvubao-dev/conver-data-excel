@@ -477,6 +477,17 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 numberVotes =
                     isBuy ? "PN$counterFormatted" : "PX$counterFormatted";
               }
+
+              String debitOut;
+              if (isBuy) {
+                debitOut = value.substring(2);
+              } else {
+                if (value == "Co152") {
+                  debitOut = "1541";
+                } else {
+                  debitOut = "632";
+                }
+              }
               return [
                 "",
                 numberVotes,
@@ -514,7 +525,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
-                isBuy ? value.substring(2) : "1541",
+                debitOut,
                 "",
                 isBuy ? "331" : value.substring(2),
                 detail,
@@ -587,6 +598,16 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 numberVotes =
                     isBuy ? "PN$counterFormatted" : "PX$counterFormatted";
               }
+              String debitOut;
+              if (isBuy) {
+                debitOut = value.substring(2);
+              } else {
+                if (value == "Co152") {
+                  debitOut = "1541";
+                } else {
+                  debitOut = "632";
+                }
+              }
               // Tạo một danh sách mới với chuỗi rỗng ở các vị trí cụ thể
               return [
                 "",
@@ -621,7 +642,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
-                isBuy ? value.substring(2) : "1541",
+                debitOut,
                 "",
                 isBuy ? "331" : value.substring(2),
                 detail,
@@ -698,7 +719,16 @@ class _SyntheticPageState extends State<SyntheticPage> {
               isBuy ? customerCode : "",
             ], // Thanh tieu de
           ];
-
+          String data511;
+          if (value == "Co156") {
+            data511 = "5111";
+          } else if (value == "Co155") {
+            data511 = "5112";
+          } else if (value == "Co152") {
+            data511 = "5113";
+          } else {
+            data511 = "";
+          }
           List<List<dynamic>> listPercent = [
             [
               "",
@@ -713,7 +743,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               sumMoney.replaceAll(".", ""),
               "131",
               buyerCode,
-              "511",
+              data511,
               "",
             ], // Thanh tieu de
           ];

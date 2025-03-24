@@ -402,7 +402,7 @@ class ExcelUtils {
   }
 
 ///////////////////
-  static void createExcel(List<List<String>> dataExcel, String fileName) {
+  static void createExcel(List<List<dynamic>> dataExcel, String fileName) {
     final excel.Workbook workbook = excel.Workbook();
     final excel.Worksheet sheet = workbook.worksheets[0];
 
@@ -542,7 +542,7 @@ class ExcelUtils {
     transformedData.add(newTitle);
 
     for (int i = 0; i < dataExcel.length; i++) {
-      List<String> row = dataExcel[i];
+      List<dynamic> row = dataExcel[i];
       // for (var row in dataExcel) {
       if (row.length > 14) {
         // Lấy mã khách hàng và tên khách hàng
@@ -597,7 +597,7 @@ class ExcelUtils {
     ];
     customerData.add(newTitle2);
     for (int i = 0; i < dataExcel.length; i++) {
-      List<String> row = dataExcel[i];
+      List<dynamic> row = dataExcel[i];
       // for (var row in dataExcel) {
       if (row.length > 14) {
         // Lấy mã khách hàng và tên khách hàng

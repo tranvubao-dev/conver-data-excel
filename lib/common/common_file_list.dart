@@ -22,12 +22,20 @@ class CommonFileList extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+          Container(
+            // width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 30),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 219, 237, 252), // Màu nền xanh
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 1, 1, 1), // Đổi màu chữ sang trắng
+              ),
             ),
           ),
           SizedBox(

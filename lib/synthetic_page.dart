@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:excel/excel.dart' show Excel;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +14,7 @@ import 'package:html_to_excel/logic/safe_value.dart';
 import 'package:html_to_excel/logic/zip_file_utils.dart';
 import 'logic/code_generator.dart';
 import 'package:lottie/lottie.dart';
+import 'package:intl/intl.dart';
 import 'dart:html' as html; // Dành cho tải file trong Flutter web
 
 class SyntheticPage extends StatefulWidget {
@@ -35,8 +37,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
   List<Map<String, dynamic>> uploadedFileBuy4 = [];
   List<Map<String, dynamic>> uploadedFileBuy5 = [];
   List<Map<String, dynamic>> uploadedFileBuy6 = [];
-  List<List<String>> dataExcel = [];
-  String? _fileName;
+  List<List<dynamic>> dataExcel = [];
+  List<List<dynamic>> dataBank = [];
 
   bool isAuxiliaryTemplateEnabled = false;
   Map<String, Object> _htmlContents = {};
@@ -76,6 +78,85 @@ class _SyntheticPageState extends State<SyntheticPage> {
     fadeOutDuration: 0.4,
   );
 
+  // Danh sách file theo cấu trúc chung
+  List<Map<String, dynamic>> getFileListData() {
+    return [
+      {
+        "title": "Nợ 152",
+        "files": uploadedFileBuy1,
+        "isBuy": true,
+        "debtCode": "No152"
+      },
+      {
+        "title": "Nợ 156",
+        "files": uploadedFileBuy2,
+        "isBuy": true,
+        "debtCode": "No156"
+      },
+      {
+        "title": "Nợ 153",
+        "files": uploadedFileBuy3,
+        "isBuy": true,
+        "debtCode": "No153"
+      },
+      {
+        "title": "Nợ 211",
+        "files": uploadedFileBuy4,
+        "isBuy": true,
+        "debtCode": "No211"
+      },
+      {
+        "title": "Nợ 154",
+        "files": uploadedFileBuy5,
+        "isBuy": true,
+        "debtCode": "No154"
+      },
+      {
+        "title": "Nợ 642",
+        "files": uploadedFileBuy6,
+        "isBuy": true,
+        "debtCode": "No642"
+      },
+      {
+        "title": "Có 156",
+        "files": uploadedFileSale1,
+        "isBuy": false,
+        "debtCode": "Co156"
+      },
+      {
+        "title": "Có 155",
+        "files": uploadedFileSale2,
+        "isBuy": false,
+        "debtCode": "Co155"
+      },
+      {
+        "title": "Có 152",
+        "files": uploadedFileSale3,
+        "isBuy": false,
+        "debtCode": "Co152"
+      },
+      {
+        "title": "File Excel",
+        "files": uploadedFiles,
+        "isBuy": false,
+        "debtCode": "Excel"
+      },
+    ];
+  }
+
+// Hàm tạo danh sách CommonFileList
+  List<Widget> buildFileLists() {
+    return getFileListData().map((file) {
+      return CommonFileList(
+        title: file["title"],
+        files: file["files"],
+        isBuy: file["isBuy"],
+        removeFile: removeFile,
+        debtCode: file["debtCode"],
+      );
+    }).toList();
+  }
+
   void resetState() {
     setState(() {
       dataExcel = []; // Đặt lại thanh tiêu đề
@@ -88,6 +169,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
       uploadedFileBuy4 = [];
       uploadedFileBuy5 = [];
       uploadedFileBuy6 = [];
+      uploadedFiles = [];
+      dataBank = [];
       _htmlContents = {}; // Xóa nội dung HTML
     });
   }
@@ -220,11 +303,11 @@ class _SyntheticPageState extends State<SyntheticPage> {
     setState(() {
       isProcessing = true; // Đánh dấu đang chạy tiến trình
     });
+
+    pickAndProcessExcelFile();
     int totalFiles = _htmlContents.length;
     int processedFiles = 0;
 
-    // dataExcel.addAll(listTitle);
-    // _htmlContents.forEach((fileName, data) {
     for (var fileName in _htmlContents.keys) {
       var data = _htmlContents[fileName] as Map<String, dynamic>;
 
@@ -282,16 +365,29 @@ class _SyntheticPageState extends State<SyntheticPage> {
               .first
               .text;
           ///////////////////////////////////////////////
-          var customerName = document // Tên người bán
-              .querySelectorAll('.list-fill-out .data-item')[0]
-              .querySelector('.di-value div')!
-              .text;
-
+          var dataItems =
+              document.querySelectorAll('.list-fill-out .data-item');
           ///////////////////////////////////////////////
-          var customerCode = document // Mã số thuế người bán
-              .querySelectorAll('.list-fill-out .data-item')[1]
-              .querySelector('.di-value div')!
-              .text;
+          var customerName =
+              dataItems[0].querySelector('.di-value div')?.text ??
+                  ''; // Tên người bán
+          var customerCode =
+              dataItems[1].querySelector('.di-value div')?.text ??
+                  ''; // Mã số thuế người bán
+          var customerAddress =
+              dataItems[2].querySelector('.di-value div')?.text ??
+                  ''; // Địa chỉ người bán
+          var customerPhone =
+              dataItems[3].querySelector('.di-value div')?.text ??
+                  ''; //Số điện thoại người bán
+          var buyerCode = dataItems[7].querySelector('.di-value div')?.text ??
+              ''; // Mã số thuế người mua
+          var customerNameBuy =
+              dataItems[5].querySelector('.di-value div')?.text ??
+                  ''; // Tên người mua
+          var customerAddressBuy =
+              dataItems[8].querySelector('.di-value div')?.text ??
+                  ''; // Địa chỉ người mua
 
           String detail;
           if (value == "Co156" || value == "Co155" || value == "Co152") {
@@ -299,32 +395,6 @@ class _SyntheticPageState extends State<SyntheticPage> {
           } else {
             detail = customerCode;
           }
-          ///////////////////////////////////////////////
-          var customerAddress = document // Địa chỉ người bán
-              .querySelectorAll('.list-fill-out .data-item')[2]
-              .querySelector('.di-value div')!
-              .text;
-          ///////////////////////////////////////////////
-          var customerPhone = document //Số điện thoại người bán
-              .querySelectorAll('.list-fill-out .data-item')[3]
-              .querySelector('.di-value div')!
-              .text;
-          /////////////////////////////////////////////////
-          var buyerCode = document // Mã số thuế người mua
-              .querySelectorAll('.list-fill-out .data-item')[7]
-              .querySelector('.di-value div')!
-              .text;
-
-          ///////////////////////////////////////////////
-          var customerNameBuy = document // Tên người mua
-              .querySelectorAll('.list-fill-out .data-item')[5]
-              .querySelector('.di-value div')!
-              .text;
-          ///////////////////////////////////////////////
-          var customerAddressBuy = document // Địa chỉ người mua
-              .querySelectorAll('.list-fill-out .data-item')[8]
-              .querySelector('.di-value div')!
-              .text;
 
           ///
           bool checkTitle =
@@ -367,7 +437,6 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 .text
                 .trim();
           }
-
           ///////////// tổng tiền chưa thuế
           var sumMoney = checkTitle
               ? document
@@ -387,7 +456,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               .querySelectorAll('.content-info .res-tb')
               .first
               .querySelectorAll('tbody tr');
-          List<List<String>> rows = [];
+          List<List<dynamic>> rows = [];
           for (var row in dataRows) {
             var cells = row.querySelectorAll('td');
             rows.add(cells.map((e) => e.text.trim()).toList());
@@ -611,7 +680,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               ];
             }).toList();
           }
-          List<List<String>> listPercentBuy = [
+          List<List<dynamic>> listPercentBuy = [
             [
               "",
               "",
@@ -630,7 +699,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
             ], // Thanh tieu de
           ];
 
-          List<List<String>> listPercent = [
+          List<List<dynamic>> listPercent = [
             [
               "",
               "",
@@ -667,8 +736,10 @@ class _SyntheticPageState extends State<SyntheticPage> {
         _progressController.add(progress); // Cập nhật tiến trình
       });
     }
+// Thêm dữ liệu ngân hàng
+    dataExcel.addAll(dataBank);
 
-    Map<String, List<List<String>>> groupedData = {};
+    Map<String, List<List<dynamic>>> groupedData = {};
     for (var row in dataExcel) {
       if (row.length > 3) {
         String invoiceNumber = row[2]; // "Số:1514" hoặc "Số:1492"
@@ -696,19 +767,20 @@ class _SyntheticPageState extends State<SyntheticPage> {
       });
 
     // Bước 3: Chuyển về List<List<String>>
-    List<List<String>> sortedDataDay = [];
+    List<List<dynamic>> sortedDataDay = [];
     for (var entry in sortedEntries) {
       sortedDataDay.addAll(
           entry.value); // Thêm tất cả dòng của nhóm vào danh sách kết quả
     }
 
-    List<List<String>> convertedData = sortedDataDay.map((row) {
+    List<List<dynamic>> convertedData = sortedDataDay.map((row) {
       String rawDate = row[3]; // Lấy ngày dạng ddMMyyyy
       if (rawDate.length == 8) {
         String formattedDate =
             "${rawDate.substring(0, 2)}/${rawDate.substring(2, 4)}/${rawDate.substring(4, 8)}";
         row[3] = formattedDate; // Cập nhật ngày mới vào danh sách
       }
+      row[9] = formatMoney(row[9]);
       return row;
     }).toList();
 
@@ -765,6 +837,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
   }
 
   void _pickExcelFile() async {
+    _progressController.add(0);
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['xlsx', 'xls'],
@@ -791,10 +864,95 @@ class _SyntheticPageState extends State<SyntheticPage> {
     }
   }
 
-  void _removeFile(int index) {
-    setState(() {
-      uploadedFiles.clear(); // Xóa file đã tải lên
-    });
+  void pickAndProcessExcelFile() async {
+    if (uploadedFiles.isEmpty) {
+      print("Không có file nào được chọn!");
+      return;
+    }
+
+    try {
+      // Lấy bytes từ uploadedFiles
+      String base64String = uploadedFiles.first['bytes']!;
+      var bytes = base64Decode(base64String);
+      var excel = Excel.decodeBytes(bytes);
+
+      // Lấy sheet đầu tiên
+      var sheetName = excel.tables.keys.first;
+      var table = excel.tables[sheetName];
+
+      if (table == null || table.rows.length <= 2) {
+        print("Lỗi: File không có đủ dữ liệu!");
+        return;
+      }
+
+      print("3 - Đang xử lý dữ liệu");
+
+      // Xử lý từng dòng dữ liệu (bắt đầu từ dòng thứ 3)
+      for (var i = 1; i < table.rows.length; i++) {
+        if (table.rows[i].isEmpty) {
+          print("Bỏ qua dòng $i vì không có dữ liệu.");
+          continue;
+        }
+
+        // Chuyển đổi tất cả giá trị trong hàng thành String
+        List<dynamic> rowData =
+            table.rows[i].map((cell) => cell?.value?.toString() ?? "").toList();
+
+        // Đảm bảo danh sách có ít nhất 3 cột trước khi truy xuất
+        String column1 = rowData.length > 0 ? rowData[0] : "N/A";
+        String column2 = rowData.length > 1 ? rowData[1] : "N/A";
+        String column3 = rowData.length > 2 ? rowData[2] : "N/A";
+        String column4 = rowData.length > 3 ? rowData[3] : "N/A";
+        String column5 = rowData.length > 4 ? rowData[4] : "N/A";
+        String column7 = rowData.length > 6 ? rowData[6] : "N/A";
+        String money;
+        bool isDebit;
+        if (column3 == "0") {
+          isDebit = false;
+          money = column4;
+        } else {
+          isDebit = true;
+          money = column3;
+        }
+        var dayElement = column1;
+        String dateText = dayElement;
+
+        RegExp regex = RegExp(r'(\d{1,2})/(\d{1,2})/(\d{4})');
+        var match = regex.firstMatch(dateText);
+        if (match != null) {
+          // Trích xuất ngày, tháng, năm
+          String day = match.group(1)!.padLeft(2, '0'); // Đảm bảo 2 chữ số
+          String month = match.group(2)!.padLeft(2, '0');
+          String year = match.group(3)!;
+
+          // Kết hợp thành "ddMMyyyy"
+          dayElement = "$day$month$year";
+        }
+
+        List<dynamic> sortedRow = [
+          "",
+          "",
+          column2,
+          dayElement,
+          column5,
+          "",
+          "",
+          "",
+          "",
+          money,
+          isDebit ? "" : "1121",
+          isDebit ? "" : column7,
+          isDebit ? "1121" : "",
+          isDebit ? column7 : "",
+        ];
+
+        // Thêm vào dataBank
+        dataBank.add(sortedRow);
+      }
+      print("4 - Dữ liệu đã xử lý xong, chuẩn bị ghi file.");
+    } catch (e) {
+      print("Lỗi xử lý file: $e");
+    }
   }
 
   @override
@@ -829,29 +987,60 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                   itemBuilder: (BuildContext context) => [
                                     const PopupMenuItem(
                                       value: "No152",
-                                      child: Text('Nhập kho nguyên vật liệu'),
+                                      child: Text('Nhập kho nguyên vật liệu',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
+                                    const PopupMenuDivider(),
                                     const PopupMenuItem(
                                       value: "No156",
-                                      child: Text('Nhập kho hàng hóa'),
+                                      child: Text('Nhập kho hàng hóa',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
+                                    const PopupMenuDivider(),
                                     const PopupMenuItem(
                                       value: "No153",
-                                      child: Text('Nhâp kho CCDC'),
+                                      child: Text('Nhâp kho CCDC',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
+                                    const PopupMenuDivider(),
                                     const PopupMenuItem(
                                       value: "No211",
-                                      child: Text('Nhâp kho TSCĐ'),
+                                      child: Text('Nhâp kho TSCĐ',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
+                                    const PopupMenuDivider(),
                                     const PopupMenuItem(
                                       value: "No154",
-                                      child: Text('Chi phí SXDD'),
+                                      child: Text('Chi phí SXDD',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
+                                    const PopupMenuDivider(),
                                     const PopupMenuItem(
                                       value: "No642",
-                                      child: Text('Chi phí QLKD'),
+                                      child: Text('Chi phí QLKD',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
                                   ],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(12), // Bo góc
+                                    side: const BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 155, 156, 147),
+                                        width: 2), // Đường viền xanh
+                                  ),
                                   child: ElevatedButton.icon(
                                     onPressed: null,
                                     style: ElevatedButton.styleFrom(
@@ -899,17 +1088,36 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                   itemBuilder: (BuildContext context) => [
                                     const PopupMenuItem(
                                       value: "Co156",
-                                      child: Text('Doanh thu bán hàng hoá'),
+                                      child: Text('Doanh thu bán hàng hoá',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
+                                    const PopupMenuDivider(),
                                     const PopupMenuItem(
                                       value: "Co155",
-                                      child: Text('Doanh thu bán thành phẩm'),
+                                      child: Text('Doanh thu bán thành phẩm',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
+                                    const PopupMenuDivider(),
                                     const PopupMenuItem(
                                       value: "Co152",
-                                      child: Text('Doanh thu cung cấp dịch vụ'),
+                                      child: Text('Doanh thu cung cấp dịch vụ',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
                                     ),
                                   ],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(12), // Bo góc
+                                    side: const BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 155, 156, 147),
+                                        width: 2), // Đường viền xanh
+                                  ),
                                   child: ElevatedButton.icon(
                                     onPressed: null,
                                     style: ElevatedButton.styleFrom(
@@ -927,8 +1135,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                       foregroundColor:
                                           Colors.white, // Giữ màu chữ trắng
                                       disabledBackgroundColor: const Color
-                                          .fromARGB(255, 240, 128,
-                                          133), // Đảm bảo màu nền không thay đổi
+                                          .fromARGB(255, 242, 138,
+                                          144), // Đảm bảo màu nền không thay đổi
                                       disabledForegroundColor:
                                           const Color.fromARGB(255, 40, 64, 99),
                                     ).copyWith(
@@ -936,123 +1144,51 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                           WidgetStateProperty.all<double>(12),
                                       shadowColor:
                                           WidgetStateProperty.all<Color>(
-                                              Colors.pink[800]!),
+                                              const Color.fromARGB(
+                                                  255, 187, 44, 106)),
                                     ),
                                     icon: const Icon(Icons.upload_file),
                                     label: const Text(
                                         'Tải lên file .zip Hoá Đơn Bán Hàng'),
                                   ),
                                 ),
-                                // ElevatedButton.icon(
-                                //   onPressed: _pickExcelFile,
-                                //   style: ElevatedButton.styleFrom(
-                                //     padding: const EdgeInsets.symmetric(
-                                //         vertical: 16, horizontal: 32),
-                                //     textStyle: const TextStyle(fontSize: 18),
-                                //     elevation: 10,
-                                //     shape: RoundedRectangleBorder(
-                                //       borderRadius: BorderRadius.circular(10),
-                                //     ),
-                                //     backgroundColor: const Color.fromARGB(
-                                //         255, 219, 237, 252), // Màu nền nút
-                                //     shadowColor: const Color.fromARGB(
-                                //         255, 226, 235, 250),
-                                //   ).copyWith(
-                                //     elevation:
-                                //         WidgetStateProperty.all<double>(12),
-                                //     shadowColor: WidgetStateProperty.all<Color>(
-                                //         Colors.blue[800]!),
-                                //   ),
-                                //   icon: const Icon(Icons.upload_file),
-                                //   label: const Text(
-                                //       'Tải lên file Excel Ngân Hàng'),
-                                // ),
+                                ElevatedButton.icon(
+                                  onPressed: _pickExcelFile,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16, horizontal: 32),
+                                    textStyle: const TextStyle(fontSize: 18),
+                                    elevation: 10,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 219, 237, 252), // Màu nền nút
+                                    shadowColor: const Color.fromARGB(
+                                        255, 226, 235, 250),
+                                  ).copyWith(
+                                    elevation:
+                                        WidgetStateProperty.all<double>(12),
+                                    shadowColor: WidgetStateProperty.all<Color>(
+                                        Colors.blue[800]!),
+                                  ),
+                                  icon: const Icon(Icons.upload_file),
+                                  label: const Text(
+                                      'Tải lên file Excel Ngân Hàng'),
+                                ),
                               ]),
                           const SizedBox(height: 30),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: Colors.black,
+                                  color: Color.fromARGB(255, 155, 156, 147),
                                   width: 2), // Viền đen bao cả khối
                               borderRadius: BorderRadius.circular(
                                   10), // Bo góc (tùy chọn)
                             ),
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  if (_fileName != null)
-                                    const SizedBox(height: 20),
-                                  CommonFileList(
-                                    title: "Nợ 152",
-                                    files: uploadedFileBuy1,
-                                    isBuy: true,
-                                    removeFile: removeFile,
-                                    debtCode: "No152",
-                                  ),
-                                  CommonFileList(
-                                    title: "Nợ 156",
-                                    files: uploadedFileBuy2,
-                                    isBuy: true,
-                                    removeFile: removeFile,
-                                    debtCode: "No156",
-                                  ),
-                                  CommonFileList(
-                                    title: "Nợ 153",
-                                    files: uploadedFileBuy3,
-                                    isBuy: true,
-                                    removeFile: removeFile,
-                                    debtCode: "No153",
-                                  ),
-                                  CommonFileList(
-                                    title: "Nợ 211",
-                                    files: uploadedFileBuy4,
-                                    isBuy: true,
-                                    removeFile: removeFile,
-                                    debtCode: "No211",
-                                  ),
-                                  CommonFileList(
-                                    title: "Nợ 154",
-                                    files: uploadedFileBuy5,
-                                    isBuy: true,
-                                    removeFile: removeFile,
-                                    debtCode: "No154",
-                                  ),
-                                  CommonFileList(
-                                    title: "Nợ 642",
-                                    files: uploadedFileBuy6,
-                                    isBuy: true,
-                                    removeFile: removeFile,
-                                    debtCode: "No642",
-                                  ),
-                                  CommonFileList(
-                                    title: "Có 156",
-                                    files: uploadedFileSale1,
-                                    isBuy: false,
-                                    removeFile: removeFile,
-                                    debtCode: "Co156",
-                                  ),
-                                  CommonFileList(
-                                    title: "Có 155",
-                                    files: uploadedFileSale2,
-                                    isBuy: false,
-                                    removeFile: removeFile,
-                                    debtCode: "Co155",
-                                  ),
-                                  CommonFileList(
-                                    title: "Có 152",
-                                    files: uploadedFileSale3,
-                                    isBuy: false,
-                                    removeFile: removeFile,
-                                    debtCode: "Co152",
-                                  ),
-                                  // CommonFileList(
-                                  //   title: "File Excel",
-                                  //   files: uploadedFiles,
-                                  //   isBuy: false,
-                                  //   removeFile: removeFile,
-                                  //   debtCode: "Excel",
-                                  // ),
-                                ]),
+                                children: buildFileLists()),
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
@@ -1064,7 +1200,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                     uploadedFileBuy3.isNotEmpty ||
                                     uploadedFileBuy4.isNotEmpty ||
                                     uploadedFileBuy5.isNotEmpty ||
-                                    uploadedFileBuy6.isNotEmpty
+                                    uploadedFileBuy6.isNotEmpty ||
+                                    uploadedFiles.isNotEmpty
                                 ? convertToExcel
                                 : null, // Vô hiệu hóa nút nếu không có file
                             style: ElevatedButton.styleFrom(
@@ -1080,7 +1217,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
                                       uploadedFileBuy3.isNotEmpty ||
                                       uploadedFileBuy4.isNotEmpty ||
                                       uploadedFileBuy5.isNotEmpty ||
-                                      uploadedFileBuy6.isNotEmpty
+                                      uploadedFileBuy6.isNotEmpty ||
+                                      uploadedFiles.isNotEmpty
                                   ? const Color.fromARGB(255, 219, 237,
                                       252) // Màu khi nút được kích hoạt
                                   : Colors.grey, // Màu khi nút bị vô hiệu hóa
@@ -1179,5 +1317,11 @@ class _SyntheticPageState extends State<SyntheticPage> {
       int.parse(date.substring(2, 4)), // MM
       int.parse(date.substring(0, 2)), // dd
     );
+  }
+
+  String formatMoney(String money) {
+    int moneyInt = int.tryParse(money) ?? 0;
+    return moneyInt.toString().replaceAllMapped(
+        RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.');
   }
 }

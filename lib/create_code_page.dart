@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:barcode/barcode.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show kIsWeb; // Kiểm tra nền tảng
 
 class CreateCodePage extends StatefulWidget {
   const CreateCodePage({super.key});
@@ -24,7 +22,7 @@ class _CreateCodePageState extends State<CreateCodePage> {
   String _generatedCode = '';
   Uint8List? barcodePng;
   String? barcodeSvg;
-  List<Map<String, dynamic>> uploadedFiles =
+  List<Map<String, String>> uploadedFiles =
       []; // Chỉ chứa 1 file// File đã tải lên
   List<List<String>> dataExcel = [];
   //////////////
@@ -78,7 +76,6 @@ class _CreateCodePageState extends State<CreateCodePage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['xlsx', 'xls'],
-      withData: true,
     );
 
     if (result != null) {
@@ -86,8 +83,8 @@ class _CreateCodePageState extends State<CreateCodePage> {
         uploadedFiles = [
           {
             'name': result.files.single.name,
-            'bytes': result.files.single
-                .bytes!, // Dùng base64Encode để chuyển đổi bytes thành chuỗi
+            'bytes': base64Encode(result.files.single
+                .bytes!), // Dùng base64Encode để chuyển đổi bytes thành chuỗi
           }
         ]; // Luôn chỉ chứa 1 file
       });
@@ -116,8 +113,8 @@ class _CreateCodePageState extends State<CreateCodePage> {
 
     try {
       // Lấy bytes từ uploadedFiles
-      List<int> base64String = uploadedFiles.first['bytes']!;
-      var bytes = base64String;
+      String base64String = uploadedFiles.first['bytes']!;
+      var bytes = base64Decode(base64String);
 
       // Đọc file Excel từ bytes
       var excel = Excel.decodeBytes(bytes);
@@ -125,13 +122,11 @@ class _CreateCodePageState extends State<CreateCodePage> {
       // Lấy sheet đầu tiên
       var sheetName = excel.tables.keys.first;
       var table = excel.tables[sheetName];
-      print("333333");
+
       if (table == null || table.rows.isEmpty) {
         print("Lỗi: Không tìm thấy dữ liệu trong file Excel!");
         return;
       }
-
-      print("44444444");
 
       // Thêm tiêu đề (giữ nguyên tiêu đề gốc và thêm cột mới "Generated Code")
       List<String> header = table.rows.first
@@ -152,7 +147,9 @@ class _CreateCodePageState extends State<CreateCodePage> {
             table.rows[i].map((cell) => cell?.value?.toString() ?? "").toList();
 
         // Kiểm tra nếu không có cột A hoặc giá trị cột A bị rỗng
-        if (rowData.isEmpty || rowData.isEmpty || rowData[0].trim().isEmpty) {
+        if (rowData.isEmpty ||
+            rowData.length < 1 ||
+            rowData[0].trim().isEmpty) {
           print("Bỏ qua dòng $i vì cột A trống.");
           continue;
         }

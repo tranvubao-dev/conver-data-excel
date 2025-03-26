@@ -488,24 +488,43 @@ class _SyntheticPageState extends State<SyntheticPage> {
                   debitOut = "632";
                 }
               }
+              // String note = SafeValueHandler.safeValue(row, 2)
+              //     .toString()
+              //     .replaceAll(
+              //         RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '') // Loại bỏ ký tự đặc biệt
+              //     .toUpperCase() // Chuyển thành chữ in hoa
+              //     .substring(
+              //         0,
+              //         min(
+              //             95,
+              //             SafeValueHandler.safeValue(row, 2)
+              //                 .toString()
+              //                 .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
+              //                 .length));
+              String note = SafeValueHandler.safeValue(row, 2).toString();
+              String noteDetail;
+              if (value == "No152" ||
+                  value == "No156" ||
+                  value == "No153" ||
+                  value == "No211") {
+                noteDetail = "Nhập kho chưa thanh toán - $note - $customerName";
+              } else if (value == "No154" || value == "No642") {
+                noteDetail =
+                    "Chi phí mua vật tư, dịch vụ - $note - $customerName";
+              } else if (value == "Co156" || value == "Co155") {
+                noteDetail = "Xuất kho bán - $note";
+              } else if (value == "Co152") {
+                noteDetail = "Xuất kho NVL sản xuất - $note";
+              } else {
+                noteDetail = note;
+              }
+
               return [
                 "",
                 numberVotes,
                 cleanedInvoiceNumber, // Ghi chú
                 dayElement, // Ngày
-                SafeValueHandler.safeValue(row, 2)
-                    .toString()
-                    .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'),
-                        '') // Loại bỏ ký tự đặc biệt
-                    .toUpperCase() // Chuyển thành chữ in hoa
-                    .substring(
-                        0,
-                        min(
-                            95,
-                            SafeValueHandler.safeValue(row, 2)
-                                .toString()
-                                .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
-                                .length)),
+                noteDetail,
                 isBuy
                     ? CodeGenerator.generateItemCode(
                         SafeValueHandler.safeValue(row, 2).toString())
@@ -542,19 +561,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 CodeGenerator.generateItemCode(
                     SafeValueHandler.safeValue(row, 2)
                         .toString()), // Mã mặt hàng
-                SafeValueHandler.safeValue(row, 2)
-                    .toString()
-                    .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'),
-                        '') // Loại bỏ ký tự đặc biệt
-                    .toUpperCase() // Chuyển thành chữ in hoa
-                    .substring(
-                        0,
-                        min(
-                            95,
-                            SafeValueHandler.safeValue(row, 2)
-                                .toString()
-                                .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
-                                .length)),
+                note,
                 SafeValueHandler.safeValue(row, 3)
                     .toString()
                     .toUpperCase(), // Thông số
@@ -608,25 +615,44 @@ class _SyntheticPageState extends State<SyntheticPage> {
                   debitOut = "632";
                 }
               }
+              // String note = SafeValueHandler.safeValue(row, 2)
+              //     .toString()
+              //     .replaceAll(
+              //         RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '') // Loại bỏ ký tự đặc biệt
+              //     .toUpperCase() // Chuyển thành chữ in hoa
+              //     .substring(
+              //         0,
+              //         min(
+              //             95,
+              //             SafeValueHandler.safeValue(row, 2)
+              //                 .toString()
+              //                 .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
+              //                 .length));
+              String note = SafeValueHandler.safeValue(row, 2).toString();
+              String noteDetail;
+              if (value == "No152" ||
+                  value == "No156" ||
+                  value == "No153" ||
+                  value == "No211") {
+                noteDetail = "Nhập kho chưa thanh toán - $note - $customerName";
+              } else if (value == "No154" || value == "No642") {
+                noteDetail =
+                    "Chi phí mua vật tư, dịch vụ - $note - $customerName";
+              } else if (value == "Co156" || value == "Co155") {
+                noteDetail = "Xuất kho bán - $note";
+              } else if (value == "Co152") {
+                noteDetail = "Xuất kho NVL sản xuất - $note";
+              } else {
+                noteDetail = note;
+              }
+
               // Tạo một danh sách mới với chuỗi rỗng ở các vị trí cụ thể
               return [
                 "",
                 numberVotes,
                 cleanedInvoiceNumber, // Ghi chú
                 dayElement, // Ngày
-                SafeValueHandler.safeValue(row, 2)
-                    .toString()
-                    .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'),
-                        '') // Loại bỏ ký tự đặc biệt
-                    .toUpperCase() // Chuyển thành chữ in hoa
-                    .substring(
-                        0,
-                        min(
-                            95,
-                            SafeValueHandler.safeValue(row, 2)
-                                .toString()
-                                .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
-                                .length)),
+                noteDetail,
                 CodeGenerator.generateItemCode(
                     SafeValueHandler.safeValue(row, 2)
                         .toString()), // Mã mặt hàng
@@ -647,7 +673,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 isBuy ? "331" : value.substring(2),
                 detail,
 
-                /////////
+                ///////////////////////////////
                 dayElement, // Ngày
                 sttNumber, // Thứ tự
                 customerCode, // Mã KH/NCC
@@ -660,19 +686,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 CodeGenerator.generateItemCode(
                     SafeValueHandler.safeValue(row, 2)
                         .toString()), // Mã mặt hàng
-                SafeValueHandler.safeValue(row, 2)
-                    .toString()
-                    .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'),
-                        '') // Loại bỏ ký tự đặc biệt
-                    .toUpperCase() // Chuyển thành chữ in hoa
-                    .substring(
-                        0,
-                        min(
-                            95,
-                            SafeValueHandler.safeValue(row, 2)
-                                .toString()
-                                .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
-                                .length)),
+                note,
                 SafeValueHandler.safeValue(row, 3)
                     .toString()
                     .toUpperCase(), // Thông số

@@ -734,14 +734,19 @@ class _SyntheticPageState extends State<SyntheticPage> {
             ], // Thanh tieu de
           ];
           String data511;
+          String nameDetail;
           if (value == "Co156") {
             data511 = "5111";
+            nameDetail = "Doanh thu bán hàng hoá - $customerNameBuy";
           } else if (value == "Co155") {
             data511 = "5112";
+            nameDetail = "Doanh thu bán thành phẩm - $customerNameBuy";
           } else if (value == "Co152") {
             data511 = "5113";
+            nameDetail = "Doanh thu cung cấp dịch vụ - $customerNameBuy";
           } else {
             data511 = "";
+            nameDetail = customerNameBuy;
           }
           List<List<dynamic>> listPercent = [
             [
@@ -749,7 +754,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
               "",
               cleanedInvoiceNumber,
               dayElement,
-              customerNameBuy,
+              nameDetail,
               "",
               "",
               "",

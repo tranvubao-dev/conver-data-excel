@@ -584,6 +584,7 @@ class ExcelUtils {
 
 //     // Thêm dữ liệu vào sheet nhà cung cấp
     List<List<String>> customerData = [];
+    List<List<String>> supplierData = [];
     Set<String> seenCodeCustomer = {}; // Set lưu các mã mặt hàng đã xuất hiện
     List<String> newTitle2 = [
       "Mã KH/NCC",
@@ -596,6 +597,7 @@ class ExcelUtils {
       "Mã số thuế"
     ];
     customerData.add(newTitle2);
+    supplierData.add(newTitle2);
     for (int i = 0; i < dataExcel.length; i++) {
       List<dynamic> row = dataExcel[i];
       // for (var row in dataExcel) {
@@ -642,7 +644,7 @@ class ExcelUtils {
             codeCustomer,
             person
           ];
-          customerData.add(newRowSale);
+          supplierData.add(newRowSale);
         }
       } else {
         // print("Dòng $i không đủ dữ liệu, bỏ qua.");
@@ -671,7 +673,7 @@ class ExcelUtils {
     }
 
     final excel.Worksheet sheet3 = workbook.worksheets.add();
-    sheet3.name = "Khách hàng"; // Đặt tên sheet phụ
+    sheet3.name = "Nhà cung cấp"; // Đặt tên sheet phụ
 
     // Thêm dữ liệu vào sheet
     for (int rowIndex = 0; rowIndex < customerData.length; rowIndex++) {
@@ -680,6 +682,29 @@ class ExcelUtils {
           colIndex++) {
         final cell = sheet3.getRangeByIndex(rowIndex + 1, colIndex + 1);
         cell.setText(customerData[rowIndex][colIndex]);
+
+        // Thêm bo viền cho ô
+        cell.cellStyle.borders.all.lineStyle = excel.LineStyle.thin;
+
+        if (rowIndex == 0) {
+          cell.cellStyle.bold = true; // Đặt chữ in đậm
+          cell.cellStyle.backColor = '#FFF9C4'; // Màu nền cho header
+        } else {
+          cell.cellStyle.backColor = '#DFEBF5'; // Màu nền cho dữ liệu
+        }
+      }
+    }
+
+    final excel.Worksheet sheet4 = workbook.worksheets.add();
+    sheet4.name = "Khách hàng"; // Đặt tên sheet phụ
+
+    // Thêm dữ liệu vào sheet
+    for (int rowIndex = 0; rowIndex < supplierData.length; rowIndex++) {
+      for (int colIndex = 0;
+          colIndex < supplierData[rowIndex].length;
+          colIndex++) {
+        final cell = sheet4.getRangeByIndex(rowIndex + 1, colIndex + 1);
+        cell.setText(supplierData[rowIndex][colIndex]);
 
         // Thêm bo viền cho ô
         cell.cellStyle.borders.all.lineStyle = excel.LineStyle.thin;

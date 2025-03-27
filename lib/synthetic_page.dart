@@ -1,20 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:excel/excel.dart' show Excel;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_fireworks/fireworks_controller.dart';
 import 'package:flutter_fireworks/fireworks_display.dart';
 import 'package:html/parser.dart';
 import 'package:html_to_excel/common/common_file_list.dart';
+import 'package:html_to_excel/common_fireworks.dart';
 import 'package:html_to_excel/logic/excel_utils.dart';
 import 'package:html_to_excel/logic/safe_value.dart';
 import 'package:html_to_excel/logic/zip_file_utils.dart';
 import 'logic/code_generator.dart';
 import 'package:lottie/lottie.dart';
-import 'package:intl/intl.dart';
 import 'dart:html' as html; // Dành cho tải file trong Flutter web
 
 class SyntheticPage extends StatefulWidget {
@@ -52,32 +50,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
   Stream<double> get progressStream => _progressController.stream;
   bool isProcessing = false; // Biến kiểm soát trạng thái của nút
 
-  final fireworksController = FireworksController(
-    // Define a list of colors for the fireworks explosions
-    colors: [
-      const Color(0xFFFF4C40), // Coral
-      const Color(0xFF6347A6), // Purple Haze
-      const Color(0xFF7FB13B), // Greenery
-      const Color(0xFF82A0D1), // Serenity Blue
-      const Color(0xFFF7B3B2), // Rose Quartz
-      const Color(0xFF864542), // Marsala
-      const Color(0xFFB04A98), // Orchid
-      const Color(0xFF008F6C), // Sea Green
-      const Color(0xFFFFD033), // Pastel Yellow
-      const Color(0xFFFF6F7C), // Pink Grapefruit
-    ],
-    // The fastest explosion in seconds
-    minExplosionDuration: 0.5,
-    // The slowest explosion in seconds
-    maxExplosionDuration: 3.5,
-    // The minimum number of particles in an explosion
-    minParticleCount: 125,
-    // The maximum number of particles in an explosion
-    maxParticleCount: 275,
-    // The duration for particles to fade out in seconds
-    fadeOutDuration: 0.4,
-  );
-
+  final CommonFireworks commonFireworks = CommonFireworks();
   // Danh sách file theo cấu trúc chung
   List<Map<String, dynamic>> getFileListData() {
     return [
@@ -863,7 +836,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
 
     ExcelUtils.createExcel(convertedData, "FileTổngHợp .xlsx");
     resetState();
-    firework();
+    commonFireworks.firework();
 
     /// Pháo hoa
     setState(() {
@@ -876,13 +849,6 @@ class _SyntheticPageState extends State<SyntheticPage> {
       invoiceCounter[key] = invoiceCounter.length + 1;
     }
     return invoiceCounter[key]!.toString().padLeft(3, '0');
-  }
-
-  void firework() {
-    fireworksController.fireMultipleRockets(
-        minRockets: 20,
-        maxRockets: 50,
-        launchWindow: const Duration(milliseconds: 600));
   }
 
   void _pickExcelFile() async {
@@ -1354,7 +1320,8 @@ class _SyntheticPageState extends State<SyntheticPage> {
             ),
           ),
           Container(
-            child: FireworksDisplay(controller: fireworksController),
+            child: FireworksDisplay(
+                controller: commonFireworks.fireworksController),
           ),
         ]));
   }

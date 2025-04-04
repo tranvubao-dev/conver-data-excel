@@ -197,20 +197,24 @@ class _CreateCodePageState extends State<CreateCodePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextField(
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          labelText: 'Nhập tên mặt hàng',
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              setState(() {
-                                _controller
-                                    .clear(); // Xóa nội dung của TextField
-                                _generatedCode = ''; // Xóa mã mặt hàng
-                              });
-                            },
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 70), // Cách lề trái phải 20px
+                        child: TextField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            labelText: 'Nhập tên mặt hàng',
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                setState(() {
+                                  _controller
+                                      .clear(); // Xóa nội dung của TextField
+                                  _generatedCode = ''; // Xóa mã mặt hàng
+                                });
+                              },
+                            ),
                           ),
                         ),
                       ),

@@ -802,7 +802,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
             "${rawDate.substring(0, 2)}/${rawDate.substring(2, 4)}/${rawDate.substring(4, 8)}";
         row[3] = formattedDate; // Cập nhật ngày mới vào danh sách
       }
-      row[9] = formatMoney(row[9]);
+      // row[9] = formatMoney(row[9]);
       return row;
     }).toList();
 

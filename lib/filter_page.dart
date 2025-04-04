@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_fireworks/fireworks_display.dart';
 import 'package:html_to_excel/common_fireworks.dart';
 import 'package:html_to_excel/logic/excel_utils.dart';
+import 'package:lottie/lottie.dart';
 
 class FilterDataPage extends StatefulWidget {
   const FilterDataPage({super.key});
@@ -72,19 +73,14 @@ class _FilterDataPageState extends State<FilterDataPage> {
   }
 
   Future<void> pickAndProcessExcelFile() async {
-    if (uploadedFileA.isEmpty) {
-      print("Không có file nào được chọn!");
-      return;
-    } else if (uploadedFileB.isEmpty) {
-      print("Không có file nào được chọn!");
-      return;
+    if (uploadedFileA.isNotEmpty) {
+      getDataExcelFile(uploadedFileA, dataA);
+      dataExcel.addAll(dataA);
     }
-
-    getDataExcelFile(uploadedFileA, dataA);
-    getDataExcelFile(uploadedFileB, dataB);
-
-    dataExcel.addAll(dataA);
-    dataExcel.addAll(dataB);
+    if (uploadedFileB.isNotEmpty) {
+      getDataExcelFile(uploadedFileB, dataB);
+      dataExcel.addAll(dataB);
+    }
 
     Map<String, List<List<dynamic>>> groupedData = {};
     for (var row in dataExcel) {
@@ -443,6 +439,23 @@ class _FilterDataPageState extends State<FilterDataPage> {
             child: FireworksDisplay(
                 controller: commonFireworks.fireworksController),
           ),
+          // Positioned(
+          //   bottom: 16,
+          //   left: 16,
+          // child: FloatingActionButton(
+          //   onPressed: () {
+          //     // Xử lý sự kiện khi nhấn vào icon
+          //     print("Icon ở góc trái được nhấn!");
+          //   },
+          //   // backgroundColor: Colors.blue,
+          //   child: Lottie.asset(
+          //     'assets/rabbit.json', // Animation từ ảnh cá nhân của bạn
+          //     width: 120,
+          //     height: 120,
+          //     repeat: true,
+          //   ),
+          // ),
+          // ),
         ]));
   }
 

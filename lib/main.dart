@@ -421,16 +421,6 @@ class _MainTabPageState extends State<MainTabPage> {
               ),
             ),
             Positioned(
-              bottom: 16,
-              left: 16,
-              child: Lottie.asset(
-                'assets/cat.json', // Animation từ ảnh cá nhân của bạn
-                width: 150,
-                height: 150,
-                repeat: true,
-              ),
-            ),
-            Positioned(
               top: -10,
               left: -10,
               child: Lottie.asset(
@@ -438,21 +428,6 @@ class _MainTabPageState extends State<MainTabPage> {
                 width: 150,
                 height: 150,
                 repeat: true,
-              ),
-            ),
-            Positioned(
-              bottom: 50,
-              left: 46,
-              child: Container(
-                width: 400,
-                height: 300,
-                child: AnimatedOpacity(
-                  opacity: _showThought ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 800),
-                  child: const CharacterThoughtBox(
-                    thoughtText: "Hmm... Mình là Liênn đây",
-                  ),
-                ),
               ),
             ),
           ],

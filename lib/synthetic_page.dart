@@ -461,20 +461,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                   debitOut = "632";
                 }
               }
-              // String note = SafeValueHandler.safeValue(row, 2)
-              //     .toString()
-              //     .replaceAll(
-              //         RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '') // Loại bỏ ký tự đặc biệt
-              //     .toUpperCase() // Chuyển thành chữ in hoa
-              //     .substring(
-              //         0,
-              //         min(
-              //             95,
-              //             SafeValueHandler.safeValue(row, 2)
-              //                 .toString()
-              //                 .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
-              //                 .length));
-              String note = SafeValueHandler.safeValue(row, 2).toString();
+              String note = SafeValueHandler.safeValue(row, 3).toString();
               String noteDetail;
               if (value == "No152" ||
                   value == "No156" ||
@@ -500,20 +487,20 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 noteDetail,
                 isBuy
                     ? CodeGenerator.generateItemCode(
-                        SafeValueHandler.safeValue(row, 2).toString())
+                        SafeValueHandler.safeValue(row, 3).toString())
                     : "", // Mã mặt hàng
                 isBuy
                     ? ""
                     : CodeGenerator.generateItemCode(
-                        SafeValueHandler.safeValue(row, 2).toString()),
-                SafeValueHandler.safeValue(row, 3)
+                        SafeValueHandler.safeValue(row, 3).toString()),
+                SafeValueHandler.safeValue(row, 4)
                     .toString()
                     .toUpperCase(), // Thông số
-                SafeValueHandler.safeValue(row, 4)
+                SafeValueHandler.safeValue(row, 5)
                     .toString()
                     .replaceAll(".", ""), // Số lượng
                 isBuy
-                    ? SafeValueHandler.safeValue(row, 8)
+                    ? SafeValueHandler.safeValue(row, 9)
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
@@ -532,26 +519,26 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 "", // Tỷ giá
                 "CN", // Hình thức thanh toán
                 CodeGenerator.generateItemCode(
-                    SafeValueHandler.safeValue(row, 2)
+                    SafeValueHandler.safeValue(row, 3)
                         .toString()), // Mã mặt hàng
                 note,
-                SafeValueHandler.safeValue(row, 3)
-                    .toString()
-                    .toUpperCase(), // Thông số
                 SafeValueHandler.safeValue(row, 4)
                     .toString()
-                    .replaceAll(".", ""), // Số lượng
+                    .toUpperCase(), // Thông số
                 SafeValueHandler.safeValue(row, 5)
+                    .toString()
+                    .replaceAll(".", ""), // Số lượng
+                SafeValueHandler.safeValue(row, 6)
                     .toString()
                     .replaceAll(".", ""), // Đơn giá
                 "", // Số tiền ngoại tệ
-                SafeValueHandler.safeValue(row, 8)
+                SafeValueHandler.safeValue(row, 9)
                     .toString()
                     .replaceAll(".", ""), // Số tiền trước thuế
-                SafeValueHandler.safeValue(row, 6)
+                SafeValueHandler.safeValue(row, 7)
                     .toString()
                     .replaceAll(".", ""), // Số tiền chiết khấu
-                SafeValueHandler.safeValue(row, 7)
+                SafeValueHandler.safeValue(row, 8)
                     .toString()
                     .replaceAll("%", ""), // % Thuế suất
                 "", // Tiền thuế
@@ -588,20 +575,7 @@ class _SyntheticPageState extends State<SyntheticPage> {
                   debitOut = "632";
                 }
               }
-              // String note = SafeValueHandler.safeValue(row, 2)
-              //     .toString()
-              //     .replaceAll(
-              //         RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '') // Loại bỏ ký tự đặc biệt
-              //     .toUpperCase() // Chuyển thành chữ in hoa
-              //     .substring(
-              //         0,
-              //         min(
-              //             95,
-              //             SafeValueHandler.safeValue(row, 2)
-              //                 .toString()
-              //                 .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]'), '')
-              //                 .length));
-              String note = SafeValueHandler.safeValue(row, 2).toString();
+              String note = SafeValueHandler.safeValue(row, 3).toString();
               String noteDetail;
               if (value == "No152" ||
                   value == "No156" ||
@@ -627,17 +601,17 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 dayElement, // Ngày
                 noteDetail,
                 CodeGenerator.generateItemCode(
-                    SafeValueHandler.safeValue(row, 2)
+                    SafeValueHandler.safeValue(row, 3)
                         .toString()), // Mã mặt hàng
                 "",
-                SafeValueHandler.safeValue(row, 3)
+                SafeValueHandler.safeValue(row, 4)
                     .toString()
                     .toUpperCase(), // Thông số
-                SafeValueHandler.safeValue(row, 4)
+                SafeValueHandler.safeValue(row, 5)
                     .toString()
                     .replaceAll(".", ""), // Số lượng
                 isBuy
-                    ? SafeValueHandler.safeValue(row, 7)
+                    ? SafeValueHandler.safeValue(row, 8)
                         .toString()
                         .replaceAll(".", "")
                     : "", // Số tiền trước thuế
@@ -657,23 +631,23 @@ class _SyntheticPageState extends State<SyntheticPage> {
                 "", // Tỷ giá
                 "CN", // Hình thức thanh toán
                 CodeGenerator.generateItemCode(
-                    SafeValueHandler.safeValue(row, 2)
+                    SafeValueHandler.safeValue(row, 3)
                         .toString()), // Mã mặt hàng
                 note,
-                SafeValueHandler.safeValue(row, 3)
-                    .toString()
-                    .toUpperCase(), // Thông số
                 SafeValueHandler.safeValue(row, 4)
                     .toString()
-                    .replaceAll(".", ""), // Số lượng
+                    .toUpperCase(), // Thông số
                 SafeValueHandler.safeValue(row, 5)
+                    .toString()
+                    .replaceAll(".", ""), // Số lượng
+                SafeValueHandler.safeValue(row, 6)
                     .toString()
                     .replaceAll(".", ""), // Đơn giá
                 "", // Số tiền ngoại tệ
-                SafeValueHandler.safeValue(row, 7)
+                SafeValueHandler.safeValue(row, 8)
                     .toString()
                     .replaceAll(".", ""), // Số tiền trước thuế
-                SafeValueHandler.safeValue(row, 6)
+                SafeValueHandler.safeValue(row, 7)
                     .toString()
                     .replaceAll(".", ""), // Số tiền chiết khấu
                 "0", // % Thuế suất
